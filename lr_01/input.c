@@ -75,23 +75,27 @@ void zeros (int **b, int **e)
     int i = n - 1;
     while (i >= 2)
     {
-        printf("\n%d - %d\n", i, *(*b+i));
         if (*(*b + i) != 0)
             break;
         i --;
     }
-    printf("result %d\n", i);
     i ++;
     *b = realloc(*b, i*sizeof(int));
     *e = *b + i;
 }
 
-int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end)
+int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end, int *power)
 {
     char *s = str_beg;
     int len = str_end - str_beg;
     int index = 0;
+    int flag = 0;
+    int power_sign = 1;
+    *power = 0;
+    int i_e = 0;
+
     *num_beg = malloc(sizeof(int));
+
     if (*s == '+' || isdigit(*s))
         *num_beg[index] = 1;// positive
     if (*s == '-')
@@ -108,6 +112,48 @@ int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end)
             *(*num_beg + index)= *(str_beg + i) - '0';
             printf("%d ", *(*num_beg + index));
         }
+
+        if (*(str_beg + i) == '.' || *(str_beg + i) == ',')
+        {
+            if (flag == 0)
+            {
+                flag = 1;
+                *power += (i - len + 1 + i_e);
+            }
+            else
+                return IO_ERR;
+        }
+
+        if ((*(str_beg + i) == '-' || *(str_beg + i) == '+'))
+        {
+            if (i != 0)
+            {
+                if (*(str_beg + i - 1) != 'e' && (*(str_beg + i - 1)) != 'E' )
+                    return IO_ERR;
+                else
+                    if (*(str_beg + i) == '-')
+                        power_sign = -1;
+            }
+        }
+
+        if (*(str_beg + i) == 'e' || *(str_beg + i) == 'E')
+        {
+            i_e = (len - i);
+            if (flag == 1)
+                return IO_ERR;
+            else
+            {
+                for (int j = index; j > 0; j --)
+                {
+                    *power = *power * 10 + *(*num_beg + j);
+                }
+                *power *= power_sign;
+                *num_beg = realloc(*num_beg, 1 * sizeof(int));
+                index = 0;
+            }
+        }
+
+
     }
     *num_end = *num_beg + index + 1;
     zeros(num_beg, num_end);
@@ -125,9 +171,15 @@ int main()
     {
         print_char(sb, se);
         int *nb = NULL, *ne = NULL;
-        make_array(sb, se, &nb, &ne);
-        print_int(nb, ne);
-        free(nb);
+        int power;
+        if (make_array(sb, se, &nb, &ne, &power) == OK)
+        {
+            printf("power - %d\n", power);
+            print_int(nb, ne);
+            free(nb);
+        }
+        else
+            printf("IO_ERR");
     }
     free(sb);
 
