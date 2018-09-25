@@ -9,7 +9,7 @@
 
 int input(char **str_array_beg, char **str_array_end)
 {
-    printf("Input a long string\n");
+    printf("Input number\n");
     int length_of_array = 1;
     *str_array_beg = malloc(length_of_array);
 
@@ -161,27 +161,167 @@ int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end, int *
     return OK;
 }
 
-int main()
+void add_zero(int **ab, int **ae, int n)
 {
-    char *sb = NULL, *se = NULL;
+    int m = *ae - *ab;
+    *ab = realloc(*ab, (m + n)* sizeof(int));
+    *ae = *ab + m + n;
+    for (int i = m; i < m + n; i ++)
+        *(*ab + i) = 0;
+    *ae = *ab + m + n;
+}
 
-    if (input(&sb, &se) == IO_ERR)
-        printf("IO_ERR");
+void sum(int **ab, int **ae, int **bb, int **be, int **sb, int **se)
+{
+    int n1 = *ae - *ab;
+    int n2 = *be - *bb;
+    int n;
+    if (n1 < n2)
+    {
+        n = n2 + 1;
+        add_zero(ab, ae, (n2 - n1 + 1));
+        add_zero(bb, be, 1);
+    }
     else
     {
-        print_char(sb, se);
-        int *nb = NULL, *ne = NULL;
-        int power;
-        if (make_array(sb, se, &nb, &ne, &power) == OK)
+        n = n1 + 1;
+        add_zero(bb, be, (n1 - n2 + 1));
+        add_zero(ab, ae, 1);
+    }
+    int r = 0;
+    *sb = malloc(n*sizeof(int));
+    **sb = 1;
+    for (int i = 1; i < n; i ++)
+    {
+        *(*sb + i) = (*(*ab + i) + *(*bb + i)) % 10 + r;
+        r = (*(*ab + i) + *(*bb + i)) / 10;
+    }
+    *se = *sb + n;
+}
+
+void copy_array(int *ab, int *ae, int *bb, int *be)
+{
+    for (int i = 0; i < (ae - ab); i ++)
+        *(bb + i) = *(ab + i);
+}
+
+void mult(int **ab, int **ae, int p1, int **bb, int **be, int p2, int **mb, int **me, int *p)
+{
+    *p = p1 + p2;
+    add_zero(bb, be, 1);
+    int n1 = *ae - *ab;
+    int n2 = *be - *bb;
+    int n = n1 + n2 - 1;
+    int *buf = NULL, *buf2 = NULL;
+    int r = 0;
+    buf2 = calloc(2, sizeof(int));
+    int *buf2_end = buf2 + 2;
+
+    for (int i = 1; i < n1; i ++)
+    {
+        r = 0;
+        buf = calloc(n, sizeof(int));
+        int *buf_end = buf + n;
+        for (int j = 1; j < n2; j++)
         {
-            printf("power - %d\n", power);
+            printf("r = %d\n", r);
+            *(buf + i + j -1) = (*(*ab + i) * *(*bb + j)) % 10 + r;
+            printf("el = %d\n", *(buf + i + j -1));
+            r = (*(*ab + i) * *(*bb + j)) / 10;
+        }
+        printf("buf ");
+        print_int(buf, buf_end);
+        sum(&buf, &buf_end, &buf2, &buf2_end, mb, me);// error
+        free(buf);
+        copy_array(*mb, *me, buf2, buf2_end);
+    }
+    **mb = (**ab == **bb);
+    zeros(mb, me);
+    free(buf2);
+}
+
+void norm_form(int *b, int *e, int p)
+{
+    if (*b == 0)
+        printf("-");
+    if(*b == 1)
+        printf("+");
+    for (int *run = e - 1; run > b; run --)
+        printf("%d", *run);
+    printf("e");
+    printf("%d", p);
+}
+
+
+int main(void)
+{
+    int rc;
+    char *sb = NULL, *se = NULL;
+    char *s2b = NULL, *s2e = NULL;
+    int *nb = NULL, *ne = NULL;
+    int power1;
+    int *n2b = NULL, *n2e = NULL;
+    int power2;
+
+    rc = input(&sb, &se);
+    if (rc == OK)
+    {
+        print_char(sb, se);
+        rc = make_array(sb, se, &nb, &ne, &power1);
+        if (rc == OK)
+        {
+            printf("power - %d\n", power1);
             print_int(nb, ne);
-            free(nb);
         }
         else
+        {
+            free(nb);
+            free(sb);
             printf("IO_ERR");
+            return rc;
+        }
     }
-    free(sb);
+    else
+    {
+        free(sb);
+        printf("IO_ERR");
+        return rc;
+    }
 
+    rc = input(&s2b, &s2e);
+    if (rc == OK)
+    {
+        print_char(s2b, s2e);
+        rc = make_array(s2b, s2e, &n2b, &n2e, &power2);
+        if (rc == OK)
+        {
+            printf("power - %d\n", power2);
+            print_int(n2b, n2e);
+        }
+        else
+        {
+            free(n2b);
+            free(s2b);
+            printf("IO_ERR");
+            return rc;
+        }
+    }
+    else
+    {
+        free(s2b);
+        printf("IO_ERR");
+        return rc;
+    }
+    int *sumb = NULL, *sume = NULL;
+    int power =0;
+    mult(&nb, &ne, power1, &n2b, &n2e, power2, &sumb, &sume, &power);
+    printf("power - %d\n", power);
+    printf("result ");
+    print_int(sumb, sume);
+    norm_form(sumb, sume, power);
+    free(sb);
+    free(s2b);
+    free(nb);
+    free(n2b);
     return OK;
 }
