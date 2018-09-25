@@ -6,53 +6,53 @@
 
 #define OK 0
 #define IO_ERR 1
+#define MEM_ERR 2
+
+void instruction()
+{
+    printf("Введите последовательно два числа (по запросу программы).\n");
+    printf("можно указывать или не указывать (если число положительно) знак мантисы числа и порядка,\n");
+    printf("число может содержать только одну точку или запятую, обозначающую дробную часть числа,\n");
+    printf("можете записать число в экспоненциальной форме, изпользуя \"e\" или \"Е\".\n" );
+    printf("Для удобства отмечены границы 30 символов.\n");
+    printf("При завершении ввода нажмите enter\n");
+}
 
 int input(char **str_array_beg, char **str_array_end)
 {
     printf("Input number\n");
+    printf("+/-|                              |\n    ");
+
     int length_of_array = 1;
     *str_array_beg = malloc(length_of_array);
-
-    int length_of_string = 0;
-    char c;
-
-    while (( c = getchar() ) != '\n' && c != EOF)
+    if (*str_array_beg)
     {
-        if (c =='+' || c == '-' || c =='.' || c == ',' || c == 'e' || c == 'E' || isdigit(c))
+        int length_of_string = 0;
+        char c;
+
+        while (( c = getchar() ) != '\n' && c != EOF)
         {
-            if (length_of_array == length_of_string)
+            if (c =='+' || c == '-' || c =='.' || c == ',' || c == 'e' || c == 'E' || isdigit(c))
             {
-                length_of_array ++;
-                *str_array_beg = realloc(*str_array_beg, length_of_array);
+                if (length_of_array == length_of_string)
+                {
+                    length_of_array ++;
+                    *str_array_beg = realloc(*str_array_beg, length_of_array);
+                }
+                *(*str_array_beg + length_of_string) = c;
+                length_of_string ++;
             }
-            *(*str_array_beg + length_of_string) = c;
-            length_of_string ++;
+            else
+                return IO_ERR;
         }
-        else
+        if(length_of_string == 0)
             return IO_ERR;
+        *str_array_end = *str_array_beg + length_of_array;
+        return OK;
     }
-
-    *str_array_end = *str_array_beg + length_of_array;
-    return OK;
+    else
+        return MEM_ERR;
 }
-
-//void print(void *b, void *e, char c)
-//{
-//    size_t size;
-//    if (c == 'c')
-//        size = 1;
-
-
-//    if (c == 'i')
-//        size = 4;
-
-//    for (void *run = b; run < e - size; run += size)
-//        if (c == 'i')
-//            printf("%d ", *run);
-//        if (c == 'c')
-//            printf("%c ", *run);
-//    printf("\n");
-//}
 
 void print_int(int *b, int *e)
 {
@@ -67,6 +67,12 @@ void print_char(char *b, char *e)
     for (char *run = b; run < e; run ++)
         printf("%c ", *run);
     printf("\n");
+}
+
+void copy_array(int *ab, int *ae, int *bb, int *be)
+{
+    for (int i = 0; i < (ae - ab); i ++)
+        *(bb + i) = *(ab + i);
 }
 
 void zeros (int **b, int **e)
@@ -84,9 +90,19 @@ void zeros (int **b, int **e)
     *e = *b + i;
 }
 
+void add_zero(int **ab, int **ae, int n)
+{
+    int m = *ae - *ab;
+    *ab = realloc(*ab, (m + n)* sizeof(int));
+    *ae = *ab + m + n;
+    for (int i = m; i < m + n; i ++)
+        *(*ab + i) = 0;
+    *ae = *ab + m + n;
+}
+
 int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end, int *power)
 {
-    char *s = str_beg;
+    assert((str_beg != NULL) && (str_end != NULL) && (str_beg < str_end) && (power != NULL));
     int len = str_end - str_beg;
     int index = 0;
     int flag = 0;
@@ -96,79 +112,83 @@ int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end, int *
 
     *num_beg = malloc(sizeof(int));
 
-    if (*s == '+' || isdigit(*s))
-        *num_beg[index] = 1;// positive
-    if (*s == '-')
-        *num_beg[index] = -1;// negative
-
-
-    for (int i = len - 1; i >= 0; i --)
+    if(*num_beg)
     {
-        if (isdigit(*(str_beg + i)))
-        {
-            index ++;
-            int length = (index + 1) * sizeof(int);
-            *num_beg = realloc(*num_beg, length);
-            *(*num_beg + index)= *(str_beg + i) - '0';
-            printf("%d ", *(*num_beg + index));
-        }
+        //значение знака храним в первом элементе массива 1 - положительный, 0 - отрицательный
+        if (*str_beg == '+' || isdigit(*str_beg))
+            *num_beg[index] = 1;// positive
+        if (*str_beg  == '-')
+            *num_beg[index] = -1;// negative
 
-        if (*(str_beg + i) == '.' || *(str_beg + i) == ',')
+
+        //заполнение с конца, зеркально
+        for (int i = len - 1; i >= 0; i --)
         {
-            if (flag == 0)
+            if (isdigit(*(str_beg + i)))
             {
-                flag = 1;
-                *power += (i - len + 1 + i_e);
+                index ++;
+                int length = (index + 1) * sizeof(int);
+                *num_beg = realloc(*num_beg, length);
+                if (!(*num_beg))
+                    return MEM_ERR;
+                *(*num_beg + index)= *(str_beg + i) - '0'; //char to int
+                printf("%d ", *(*num_beg + index));
             }
-            else
-                return IO_ERR;
-        }
 
-        if ((*(str_beg + i) == '-' || *(str_beg + i) == '+'))
-        {
-            if (i != 0)
+            if (*(str_beg + i) == '.' || *(str_beg + i) == ',')
             {
-                if (*(str_beg + i - 1) != 'e' && (*(str_beg + i - 1)) != 'E' )
+                if (flag == 0)
+                {
+                    flag = 1;
+                    *power += (i - len + 1 + i_e);
+                }
+                else
+                    return IO_ERR;
+            }
+
+            if ((*(str_beg + i) == '-' || *(str_beg + i) == '+'))
+            {
+                if (i != 0)
+                {
+                    if (*(str_beg + i - 1) != 'e' && (*(str_beg + i - 1)) != 'E' )
+                        return IO_ERR;
+                    else
+                        if (*(str_beg + i) == '-')
+                            power_sign = -1;
+                }
+            }
+
+            //при с талкновении с е бегунок по массиву идет в обратную сторону, создавая значение степени типа int
+            if (*(str_beg + i) == 'e' || *(str_beg + i) == 'E')
+            {
+                if (index > 4)
+                    printf("\n!!Переполнение порядка!!\n");
+                if(index > 9)
+                    return IO_ERR;
+                i_e = (len - i);
+                if (flag == 1)
                     return IO_ERR;
                 else
-                    if (*(str_beg + i) == '-')
-                        power_sign = -1;
-            }
-        }
-
-        if (*(str_beg + i) == 'e' || *(str_beg + i) == 'E')
-        {
-            i_e = (len - i);
-            if (flag == 1)
-                return IO_ERR;
-            else
-            {
-                for (int j = index; j > 0; j --)
                 {
-                    *power = *power * 10 + *(*num_beg + j);
+                    for (int j = index; j > 0; j --)
+                    {
+                        *power = *power * 10 + *(*num_beg + j);
+                    }
+                    *power *= power_sign;
+                    *num_beg = realloc(*num_beg, 1 * sizeof(int));
+                    index = 0;
                 }
-                *power *= power_sign;
-                *num_beg = realloc(*num_beg, 1 * sizeof(int));
-                index = 0;
             }
         }
+        *num_end = *num_beg + index + 1;
+        if((*num_end - *num_beg) > 30)
+            printf("\n!!Ваше число превышает 30 символов!!\n");
+        zeros(num_beg, num_end);
 
-
+        return OK;
     }
-    *num_end = *num_beg + index + 1;
-    zeros(num_beg, num_end);
-
-    return OK;
-}
-
-void add_zero(int **ab, int **ae, int n)
-{
-    int m = *ae - *ab;
-    *ab = realloc(*ab, (m + n)* sizeof(int));
-    *ae = *ab + m + n;
-    for (int i = m; i < m + n; i ++)
-        *(*ab + i) = 0;
-    *ae = *ab + m + n;
+    else
+        return MEM_ERR;
 }
 
 void sum(int **ab, int **ae, int **bb, int **be, int **sb, int **se)
@@ -199,12 +219,6 @@ void sum(int **ab, int **ae, int **bb, int **be, int **sb, int **se)
     *se = *sb + n;
 }
 
-void copy_array(int *ab, int *ae, int *bb, int *be)
-{
-    for (int i = 0; i < (ae - ab); i ++)
-        *(bb + i) = *(ab + i);
-}
-
 void mult(int **ab, int **ae, int p1, int **bb, int **be, int p2, int **mb, int **me, int *p)
 {
     *p = p1 + p2;
@@ -224,14 +238,10 @@ void mult(int **ab, int **ae, int p1, int **bb, int **be, int p2, int **mb, int 
         int *buf_end = buf + n;
         for (int j = 1; j < n2; j++)
         {
-            printf("r = %d\n", r);
             *(buf + i + j -1) = (*(*ab + i) * *(*bb + j)) % 10 + r;
-            printf("el = %d\n", *(buf + i + j -1));
             r = (*(*ab + i) * *(*bb + j)) / 10;
         }
-        printf("buf ");
-        print_int(buf, buf_end);
-        sum(&buf, &buf_end, &buf2, &buf2_end, mb, me);// error
+        sum(&buf, &buf_end, &buf2, &buf2_end, mb, me);
         free(buf);
         copy_array(*mb, *me, buf2, buf2_end);
     }
@@ -255,36 +265,54 @@ void norm_form(int *b, int *e, int p)
 
 int main(void)
 {
-    int rc;
-    char *sb = NULL, *se = NULL;
-    char *s2b = NULL, *s2e = NULL;
-    int *nb = NULL, *ne = NULL;
-    int power1;
-    int *n2b = NULL, *n2e = NULL;
-    int power2;
+    setbuf(stdout, NULL);
+    printf("типы и структуры данных\nлабораторная работа 1\nИУ7-31Б Лучина Елена\n\n");
+    printf("\t\tУмножение больших чисел\n\n");
+    instruction();
+
+    int rc;//                               код возврата
+    char *sb = NULL, *se = NULL;//          строка первого числа
+    char *s2b = NULL, *s2e = NULL;//        строка второго числа
+    int *nb = NULL, *ne = NULL;//           мантисса первого числа
+    int power1;//                           степень первого числа
+    int *n2b = NULL, *n2e = NULL; //        мантисса второго числа
+    int power2;//                           степень второго числа
 
     rc = input(&sb, &se);
     if (rc == OK)
     {
-        print_char(sb, se);
+        print_char(sb, se); //считанная строка
         rc = make_array(sb, se, &nb, &ne, &power1);
         if (rc == OK)
         {
-            printf("power - %d\n", power1);
+            printf("power - %d\n", power1);//степень, при приведенном к стандарту числе
             print_int(nb, ne);
         }
-        else
+        else if (rc == IO_ERR)
         {
             free(nb);
             free(sb);
-            printf("IO_ERR");
+            free(sb);
+            printf("Некорректный ввод\n");
+            printf("Обратите внимание на инструкцию к вводу.\n");
+            return rc;
+        }
+        else
+        {
+            printf("Ошибка памяти\n");
             return rc;
         }
     }
-    else
+    else if (rc == IO_ERR)
     {
         free(sb);
-        printf("IO_ERR");
+        printf("Некорректный ввод\n");
+        printf("Обратите внимание на инструкцию к вводу.\n");
+        return rc;
+    }
+    else
+    {
+        printf("Ошибка памяти\n");
         return rc;
     }
 
