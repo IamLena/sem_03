@@ -3,10 +3,18 @@
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
+#include<time.h>
 
 #define OK 0
 #define IO_ERR 1
 #define MEM_ERR 2
+
+unsigned long long tick(void)
+{
+    unsigned long long d;
+    __asm__ __volatile__ ("rdtsc" : "=A" (d) );
+    return d;
+}
 
 void instruction()
 {
@@ -42,7 +50,11 @@ int input_int(char **str_array_beg, char **str_array_end)
                 if (length_of_array == length_of_string)
                 {
                     length_of_array ++;
-                    *str_array_beg = realloc(*str_array_beg, length_of_array);
+                    char * tmp = realloc(*str_array_beg, length_of_array);
+                    if(tmp)
+                        *str_array_beg = tmp;
+                    else
+                        return MEM_ERR;
                 }
                 *(*str_array_beg + length_of_string) = c;
                 length_of_string ++;
@@ -84,8 +96,10 @@ int input_float(char **str_array_beg, char **str_array_end)
                 if (length_of_array == length_of_string)
                 {
                     length_of_array ++;
-                    *str_array_beg = realloc(*str_array_beg, length_of_array);
-                    if(!*str_array_beg)
+                    char *tmp = realloc(*str_array_beg, length_of_array);
+                    if(tmp)
+                        *str_array_beg = tmp;
+                    else
                         return MEM_ERR;
                 }
                 *(*str_array_beg + length_of_string) = c;
@@ -134,7 +148,7 @@ void copy_array(const int *ab, const int *ae, int *bb, int *be)
         *(bb + i) = *(ab + i);
 }
 
-void delete_useless_zeros (int **b, int **e)
+int delete_useless_zeros (int **b, int **e)
 {
     int n = *e - *b;
     int i = n - 1;
@@ -145,18 +159,28 @@ void delete_useless_zeros (int **b, int **e)
         i --;
     }
     i ++;
-    *b = realloc(*b, i*sizeof(int));
+    int *tmp = realloc(*b, i*sizeof(int));
+    if(tmp)
+        *b = tmp;
+    else
+        return MEM_ERR;
     *e = *b + i;
+    return OK;
 }
 
-void add_zero(int **ab, int **ae, int n)
+int add_zero(int **ab, int **ae, int n)
 {
     int m = *ae - *ab;
-    *ab = realloc(*ab, (m + n)* sizeof(int));
+    int *tmp = realloc(*ab, (m + n)* sizeof(int));
+    if (tmp)
+        *ab = tmp;
+    else
+        return MEM_ERR;
     *ae = *ab + m + n;
     for (int i = m; i < m + n; i ++)
         *(*ab + i) = 0;
     *ae = *ab + m + n;
+    return OK;
 }
 
 int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end, int *power)
@@ -188,8 +212,10 @@ int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end, int *
             {
                 index ++;
                 int length = (index + 1) * sizeof(int);
-                *num_beg = realloc(*num_beg, length);
-                if (!(*num_beg))
+                int *tmp = realloc(*num_beg, length);
+                if(tmp)
+                    *num_beg = tmp;
+                else
                     return MEM_ERR;
                 *(*num_beg + index)= *(str_beg + i) - '0'; //char to int
             }
@@ -212,6 +238,11 @@ int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end, int *
             {
                 if (i != 0)
                 {
+                    if (i == len - 1)
+                    {
+                        printf("Пустой ввод\n");
+                        return IO_ERR;
+                    }
                     if (*(str_beg + i - 1) != 'e' && (*(str_beg + i - 1)) != 'E' )
                     {
                         printf("\nНеправильное место знака");
@@ -221,18 +252,29 @@ int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end, int *
                         if (*(str_beg + i) == '-')
                             power_sign = -1;
                 }
+                else
+                    if(i == len - 1)
+                    {
+                        printf("Пустой ввод\n");
+                        return IO_ERR;
+                    }
             }
 
             //при с талкновении с е бегунок по массиву идет в обратную сторону, создавая значение степени типа int
             if ((*(str_beg + i) == 'e' || *(str_beg + i) == 'E'))
             {
+                if (i == len - 1 || i == 0 || (i == 1 && (*str_beg == '+' || *str_beg == '-')))
+                {
+                    printf("Пустой ввод\n");
+                    return IO_ERR;
+                }
                 if (flag_e == 1)
                 {
                     printf("\nСодержит более одной е.");
                     return IO_ERR;
                 }
                 flag_e = 1;
-                if (index > 4)
+                if (index > 5)
                 {
                     printf("\n!!Переполнение порядка!!");
                     return IO_ERR;
@@ -248,7 +290,11 @@ int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end, int *
                     for (int j = index; j > 0; j --)
                         *power = *power * 10 + *(*num_beg + j);
                     *power *= power_sign;
-                    *num_beg = realloc(*num_beg, 1 * sizeof(int));
+                    int *tmp = realloc(*num_beg, 1 * sizeof(int));
+                    if(tmp)
+                        *num_beg = tmp;
+                    else
+                        return MEM_ERR;
                     index = 0;
                 }
             }
@@ -259,8 +305,10 @@ int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end, int *
             printf("\n!!Ваше число превышает 30 символов!!");
             return IO_ERR;
         }
-        delete_useless_zeros(num_beg, num_end);
-        return OK;
+        if (delete_useless_zeros(num_beg, num_end) == OK)
+            return OK;
+        else
+            return MEM_ERR;
     }
     else
         return MEM_ERR;
@@ -271,17 +319,26 @@ int sum(int **ab, int **ae, int **bb, int **be, int **sb, int **se)
     int n1 = *ae - *ab;
     int n2 = *be - *bb;
     int n;
+    int rc;
     if (n1 < n2)
     {
         n = n2 + 1;
-        add_zero(ab, ae, (n2 - n1 + 1));
-        add_zero(bb, be, 1);
+        rc = add_zero(ab, ae, (n2 - n1 + 1));
+        if(rc == MEM_ERR)
+            return rc;
+        rc = add_zero(bb, be, 1);
+        if(rc == MEM_ERR)
+            return rc;
     }
     else
     {
         n = n1 + 1;
-        add_zero(bb, be, (n1 - n2 + 1));
-        add_zero(ab, ae, 1);
+        rc = add_zero(bb, be, (n1 - n2 + 1));
+        if (rc == MEM_ERR)
+            return rc;
+        rc = add_zero(ab, ae, 1);
+        if (rc == MEM_ERR)
+            return rc;
     }
     int r = 0;
     *sb = malloc(n*sizeof(int));
@@ -300,7 +357,9 @@ int sum(int **ab, int **ae, int **bb, int **be, int **sb, int **se)
 int mult(int **ab, int **ae, int p1, int **bb, int **be, int p2, int **mb, int **me, int *p)
 {
     *p = p1 + p2;
-    add_zero(bb, be, 1);
+    int rc = add_zero(bb, be, 1);
+    if(rc == MEM_ERR)
+        return rc;
     int n1 = *ae - *ab;
     int n2 = *be - *bb;
     int n = n1 + n2 - 1;
@@ -342,7 +401,7 @@ int count_zeros(const int *b, const int *e)
 {
     assert( b != NULL && e != NULL && b < e);
     int count = 0;
-    for (int i = 1; i < (e - b - 1); i ++)
+    for (int i = 1; i < (e - b); i ++)
     {
         if (*(b + i) == 0)
             count ++;
@@ -364,24 +423,18 @@ void zeros(int **b, int **e, int *p)
 }
 void norm_form(int *b, int *e, int p)
 {
-    print_int(b, e);
-    if(*(b+1) == 0)
-        printf("0");
-    else
+    if (*b == 0)
+        printf("-");
+    if(*b == 1)
+        printf("+");
+    printf("0.");
+    p += (int)(e - b - 1);
+    for (int *run = e - 1; run > b; run --)
+        printf("%d", *run);
+    if (p != 0)
     {
-        if (*b == 0)
-            printf("-");
-        if(*b == 1)
-            printf("+");
-        printf("0.");
-        p += (int)(e - b - 1);
-        for (int *run = e - 1; run > b; run --)
-            printf("%d", *run);
-        if (p != 0)
-        {
-            printf("e");
-            printf("%d", p);
-        }
+        printf("e");
+        printf("%d", p);
     }
 }
 
@@ -407,14 +460,17 @@ void round_num (int **b, int **e)
     }
     if (*(*e - 1) == 10)
     {
-        *(*e - 1) = 0;
-        add_zero(b, e, 1);
+        int rc = add_zero(b, e, 1);
+        if (rc == MEM_ERR)
+            return;
+        *(*e - 2) = 0;
         *(*e - 1) = 1;
     }
 }
 
 int main(void)
 {
+    unsigned long long t1, t2, t;
     setbuf(stdout, NULL);
     printf("типы и структуры данных\nлабораторная работа 1\nИУ7-31Б Лучина Елена вариант-20\n\n");
     printf("Умножение больших чисел (вещественное на целое)\n\n");
@@ -425,7 +481,7 @@ int main(void)
     char *s2b = NULL, *s2e = NULL;//        строка второго числа
     int *nb = NULL, *ne = NULL;//           мантисса первого числа
     int power1;//                           степень первого числа
-    int *n2b = NULL, *n2e = NULL; //        мантисса второго числа
+    int *n2b = NULL, *n2e = NULL;//        мантисса второго числа
     int power2;//                           степень второго числа
 
     rc = input_float(&sb, &se);
@@ -500,6 +556,7 @@ int main(void)
         return rc;
     }
 
+    t1 = tick();
     int *multb = NULL, *multe = NULL;
     int power =0;
     rc = mult(&nb, &ne, power1, &n2b, &n2e, power2, &multb, &multe, &power);
@@ -516,5 +573,10 @@ int main(void)
     free(s2b);
     free(nb);
     free(n2b);
+    t2 = tick();
+    t = t2 - t1;
+    printf("\ntime - %lu tick", (unsigned long)t);
+    t /= 2400000000;//2.40Ггц - тактовая частота процессора
+    printf("\ntime - %lusec", (unsigned long)t);// 2133437267sec
     return rc;
 }
