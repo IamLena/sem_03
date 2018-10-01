@@ -8,19 +8,71 @@
 #define IO_ERR 1
 #define MEM_ERR 2
 
+//unsigned long long tick(void)
+//{
+//    unsigned long long d;
+//    __asm__ __volatile__ ("rdtsc" : "=A" (d) );
+//    return d;
+//}
+//unsigned long long t1, t2, t;
+//t1 = tick();
+//t2 = tick();
+//t = t2 - t1;
+//printf("\ntime - %lu tick", (unsigned long)t);
+//t /= 2400000000;//2.40Ггц - тактовая частота процессора
+//printf("\ntime - %lusec", (unsigned long)t);// 2133437267sec
+
 void instruction()
 {
     printf("Введите последовательно два числа (по запросу программы).\n");
-    printf("можно указывать или не указывать (если число положительно) знак мантисы числа и порядка,\n");
+    printf("Число вводите без пробелов.");
+    printf("Укажите знак мантисы числа и порядка, при отсутсвии знака число будет считаться положительным,\n");
     printf("число может содержать только одну точку или запятую, обозначающую дробную часть числа,\n");
     printf("можете записать число в экспоненциальной форме, изпользуя \"e\" или \"Е\".\n" );
+    printf("Разряд порядка должен не превышать 5.\n");
     printf("Для удобства отмечены границы 30 символов.\n");
     printf("При завершении ввода нажмите enter\n");
 }
 
-int input(char **str_array_beg, char **str_array_end)
+int input_int(char **str_array_beg, char **str_array_end)
 {
-    printf("Input number\n");
+    printf("Введите целое число:\n");
+    printf("+/-|                              |\n    ");
+
+    int length_of_array = 1;
+    *str_array_beg = malloc(length_of_array);
+    if (*str_array_beg)
+    {
+        int length_of_string = 0;
+        char c;
+
+        while (( c = getchar() ) != '\n' && c != EOF)
+        {
+            if (c =='+' || c == '-' || isdigit(c))
+            {
+                if (length_of_array == length_of_string)
+                {
+                    length_of_array ++;
+                    *str_array_beg = realloc(*str_array_beg, length_of_array);
+                }
+                *(*str_array_beg + length_of_string) = c;
+                length_of_string ++;
+            }
+            else
+                return IO_ERR;
+        }
+        if(length_of_string == 0)
+            return IO_ERR;
+        *str_array_end = *str_array_beg + length_of_array;
+        return OK;
+    }
+    else
+        return MEM_ERR;
+}
+
+int input_float(char **str_array_beg, char **str_array_end)
+{
+    printf("Введите вещественное число:\n");
     printf("+/-|                              |\n    ");
 
     int length_of_array = 1;
@@ -54,32 +106,36 @@ int input(char **str_array_beg, char **str_array_end)
         return MEM_ERR;
 }
 
-void print_int(int *b, int *e)
+void print_int(const int *b, const int *e)
 {
+    assert(b != NULL && e != NULL && b < e);
     printf("array: ");
-    for (int *run = b; run < e; run ++)
+    for (const int *run = b; run < e; run ++)
         printf("%d ", *run);
     printf("\n");
 }
 
-void print_char(char *b, char *e)
+void print_char(const char *b, const char *e)
 {
-    for (char *run = b; run < e; run ++)
+    assert(b != NULL && e != NULL && b < e);
+    for (const char *run = b; run < e; run ++)
         printf("%c ", *run);
     printf("\n");
 }
 
-void copy_array(int *ab, int *ae, int *bb, int *be)
+void copy_array(const int *ab, const int *ae, int *bb, int *be)
 {
+    assert(ab != NULL && ae != NULL && bb != NULL && be != NULL);
+    assert((ae - ab == be - bb) && (ab < ae));
     for (int i = 0; i < (ae - ab); i ++)
         *(bb + i) = *(ab + i);
 }
 
-void zeros (int **b, int **e)
+void delete_useless_zeros (int **b, int **e)
 {
     int n = *e - *b;
     int i = n - 1;
-    while (i >= 2)
+    while (i > 1)
     {
         if (*(*b + i) != 0)
             break;
@@ -162,9 +218,10 @@ int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end, int *
             if (*(str_beg + i) == 'e' || *(str_beg + i) == 'E')
             {
                 if (index > 4)
+                {
                     printf("\n!!Переполнение порядка!!\n");
-                if(index > 9)
                     return IO_ERR;
+                }
                 i_e = (len - i);
                 if (flag == 1)
                     return IO_ERR;
@@ -181,9 +238,9 @@ int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end, int *
             }
         }
         *num_end = *num_beg + index + 1;
-        if((*num_end - *num_beg) > 30)
+        if((*num_end - *num_beg) > 31)
             printf("\n!!Ваше число превышает 30 символов!!\n");
-        zeros(num_beg, num_end);
+        delete_useless_zeros(num_beg, num_end);
 
         return OK;
     }
@@ -191,7 +248,7 @@ int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end, int *
         return MEM_ERR;
 }
 
-void sum(int **ab, int **ae, int **bb, int **be, int **sb, int **se)
+int sum(int **ab, int **ae, int **bb, int **be, int **sb, int **se)
 {
     int n1 = *ae - *ab;
     int n2 = *be - *bb;
@@ -210,6 +267,8 @@ void sum(int **ab, int **ae, int **bb, int **be, int **sb, int **se)
     }
     int r = 0;
     *sb = malloc(n*sizeof(int));
+    if (!(*sb))
+        return MEM_ERR;
     **sb = 1;
     for (int i = 1; i < n; i ++)
     {
@@ -217,9 +276,10 @@ void sum(int **ab, int **ae, int **bb, int **be, int **sb, int **se)
         r = (*(*ab + i) + *(*bb + i)) / 10;
     }
     *se = *sb + n;
+    return OK;
 }
 
-void mult(int **ab, int **ae, int p1, int **bb, int **be, int p2, int **mb, int **me, int *p)
+int mult(int **ab, int **ae, int p1, int **bb, int **be, int p2, int **mb, int **me, int *p)
 {
     *p = p1 + p2;
     add_zero(bb, be, 1);
@@ -229,39 +289,107 @@ void mult(int **ab, int **ae, int p1, int **bb, int **be, int p2, int **mb, int 
     int *buf = NULL, *buf2 = NULL;
     int r = 0;
     buf2 = calloc(2, sizeof(int));
+    if(!buf2)
+        return MEM_ERR;
     int *buf2_end = buf2 + 2;
 
     for (int i = 1; i < n1; i ++)
     {
         r = 0;
         buf = calloc(n, sizeof(int));
+        if(!buf)
+            return MEM_ERR;
         int *buf_end = buf + n;
         for (int j = 1; j < n2; j++)
         {
             *(buf + i + j -1) = (*(*ab + i) * *(*bb + j)) % 10 + r;
             r = (*(*ab + i) * *(*bb + j)) / 10;
         }
-        sum(&buf, &buf_end, &buf2, &buf2_end, mb, me);
+        if (sum(&buf, &buf_end, &buf2, &buf2_end, mb, me) == MEM_ERR)
+        {
+            free(buf);
+            free(buf2);
+            return MEM_ERR;
+        }
         free(buf);
         copy_array(*mb, *me, buf2, buf2_end);
     }
     **mb = (**ab == **bb);
-    zeros(mb, me);
+    delete_useless_zeros(mb, me);
     free(buf2);
+    return OK;
 }
 
+int count_zeros(const int *b, const int *e)
+{
+    assert( b != NULL && e != NULL && b < e);
+    int count = 0;
+    for (int i = 1; i < (e - b); i ++)
+    {
+        if (*(b + i) == 0)
+            count ++;
+        else
+            break;
+    }
+    return count;
+}
+
+void zeros(int **b, int **e, int *p)
+{
+    assert(p != NULL && b != NULL && e != NULL);
+    int n = *e - *b;
+    int m = count_zeros(*b, *e);
+    memmove(*b + 1, *b + 1 + m, (n - m) * sizeof(int));
+    //print_int(*b, *e);
+    *p += m;
+    *b = realloc(*b, (n - m)*sizeof(int));
+    *e = *b + (n - m);
+    //print_int(*b, *e);
+}
 void norm_form(int *b, int *e, int p)
 {
     if (*b == 0)
         printf("-");
     if(*b == 1)
         printf("+");
+    printf("0.");
+    p += (int)(e - b - 1);
     for (int *run = e - 1; run > b; run --)
         printf("%d", *run);
-    printf("e");
-    printf("%d", p);
+    if (p != 0)
+    {
+        printf("e");
+        printf("%d", p);
+    }
 }
 
+void round_num (int **b, int **e)
+{
+    int n = *e - *b;
+    assert(n > 30);
+    int m = n - 30;
+    for (int i = 1; i < m; i ++)
+    {
+        if (*(*b + i) >= 5)
+            *(*b + i + 1) += 1;
+        *(*b + i) = 0;
+    }
+
+    for (int i = m; i < n - 1; i ++)
+    {
+        if (*(*b + i) == 10)
+        {
+            *(*b + i) = 0;
+            *(*b + i + 1) += 1;
+        }
+    }
+    if (*(*e - 1) == 10)
+    {
+        *(*e - 1) = 0;
+        add_zero(b, e, 1);
+        *(*e - 1) = 1;
+    }
+}
 
 int main(void)
 {
@@ -278,10 +406,11 @@ int main(void)
     int *n2b = NULL, *n2e = NULL; //        мантисса второго числа
     int power2;//                           степень второго числа
 
-    rc = input(&sb, &se);
+    //rc = input_int(&sb, &se);
+    rc = input_float(&sb, &se);
     if (rc == OK)
     {
-        print_char(sb, se); //считанная строка
+        //print_char(sb, se); //считанная строка
         rc = make_array(sb, se, &nb, &ne, &power1);
         if (rc == OK)
         {
@@ -316,7 +445,7 @@ int main(void)
         return rc;
     }
 
-    rc = input(&s2b, &s2e);
+    rc = input_float(&s2b, &s2e);
     if (rc == OK)
     {
         print_char(s2b, s2e);
@@ -340,16 +469,29 @@ int main(void)
         printf("IO_ERR");
         return rc;
     }
-    int *sumb = NULL, *sume = NULL;
+    int *multb = NULL, *multe = NULL;
     int power =0;
-    mult(&nb, &ne, power1, &n2b, &n2e, power2, &sumb, &sume, &power);
-    printf("power - %d\n", power);
-    printf("result ");
-    print_int(sumb, sume);
-    norm_form(sumb, sume, power);
+    rc = mult(&nb, &ne, power1, &n2b, &n2e, power2, &multb, &multe, &power);
+    if(rc == OK)
+    {
+        printf("power - %d\n", power);
+        printf("result ");
+        print_int(multb, multe);
+        norm_form(multb, multe, power);
+        if ((multe - multb) > 31)
+        {
+            printf("\nround\n");
+            round_num(&multb, &multe);
+        }
+        zeros(&multb, &multe, &power);
+        print_int(multb, multe);
+        norm_form(multb, multe, power);
+    }
+    else
+        printf("memory error");
     free(sb);
     free(s2b);
     free(nb);
     free(n2b);
-    return OK;
+    return rc;
 }

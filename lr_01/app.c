@@ -3,18 +3,10 @@
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
-#include<time.h>
 
 #define OK 0
 #define IO_ERR 1
 #define MEM_ERR 2
-
-unsigned long long tick(void)
-{
-    unsigned long long d;
-    __asm__ __volatile__ ("rdtsc" : "=A" (d) );
-    return d;
-}
 
 void instruction()
 {
@@ -170,10 +162,15 @@ int delete_useless_zeros (int **b, int **e)
 
 int add_zero(int **ab, int **ae, int n)
 {
+    assert(ab != NULL && *ab != NULL && ae != NULL && *ae != NULL && *ae > *ab);
     int m = *ae - *ab;
-    int *tmp = realloc(*ab, (m + n)* sizeof(int));
+    int length_ab = (m + n) * sizeof(int);
+    int *tmp = realloc(*ab, length_ab);
     if (tmp)
+    {
         *ab = tmp;
+        tmp = NULL;
+    }
     else
         return MEM_ERR;
     *ae = *ab + m + n;
@@ -341,6 +338,11 @@ int sum(int **ab, int **ae, int **bb, int **be, int **sb, int **se)
             return rc;
     }
     int r = 0;
+//    int *tmp = malloc(n*sizeof(int));
+//    if (tmp)
+//        *sb = tmp;
+//    else
+//        return MEM_ERR;
     *sb = malloc(n*sizeof(int));
     if (!(*sb))
         return MEM_ERR;
@@ -413,7 +415,7 @@ int count_zeros(const int *b, const int *e)
 
 void zeros(int **b, int **e, int *p)
 {
-    assert(p != NULL && b != NULL && e != NULL);
+    assert(p != NULL && *b != NULL && *e != NULL);
     int n = *e - *b;
     int m = count_zeros(*b, *e);
     memmove(*b + 1, *b + 1 + m, (n - m) * sizeof(int));
@@ -470,7 +472,6 @@ void round_num (int **b, int **e)
 
 int main(void)
 {
-    unsigned long long t1, t2, t;
     setbuf(stdout, NULL);
     printf("типы и структуры данных\nлабораторная работа 1\nИУ7-31Б Лучина Елена вариант-20\n\n");
     printf("Умножение больших чисел (вещественное на целое)\n\n");
@@ -556,7 +557,6 @@ int main(void)
         return rc;
     }
 
-    t1 = tick();
     int *multb = NULL, *multe = NULL;
     int power =0;
     rc = mult(&nb, &ne, power1, &n2b, &n2e, power2, &multb, &multe, &power);
@@ -573,10 +573,5 @@ int main(void)
     free(s2b);
     free(nb);
     free(n2b);
-    t2 = tick();
-    t = t2 - t1;
-    printf("\ntime - %lu tick", (unsigned long)t);
-    t /= 2400000000;//2.40Ггц - тактовая частота процессора
-    printf("\ntime - %lusec", (unsigned long)t);// 2133437267sec
     return rc;
 }
