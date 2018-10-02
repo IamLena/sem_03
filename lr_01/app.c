@@ -8,7 +8,7 @@
 #define IO_ERR 1
 #define MEM_ERR 2
 
-#define CHUNCK 10
+#define CHUNK 10
 
 void instruction()
 {
@@ -43,7 +43,7 @@ int input_int(char **str_array_beg, char **str_array_end)
             {
                 if (length_of_array == length_of_string)
                 {
-                    length_of_array += CHUNCK;
+                    length_of_array += CHUNK;
                     char * tmp = realloc(*str_array_beg, length_of_array);
                     if(tmp)
                         *str_array_beg = tmp;
@@ -94,8 +94,8 @@ int input_float(char **str_array_beg, char **str_array_end)
             {
                 if (length_of_array == length_of_string)
                 {
-                    length_of_array ++;
-                    char *tmp = realloc(*str_array_beg, length_of_array);
+                    length_of_array += CHUNK;
+                    char * tmp = realloc(*str_array_beg, length_of_array);
                     if(tmp)
                         *str_array_beg = tmp;
                     else
@@ -115,6 +115,11 @@ int input_float(char **str_array_beg, char **str_array_end)
             printf("\nПустой ввод.");
             return IO_ERR;
         }
+        char * tmp = realloc(*str_array_beg, length_of_string);
+        if(tmp)
+            *str_array_beg = tmp;
+        else
+            return MEM_ERR;
         *str_array_end = *str_array_beg + length_of_array;
         return OK;
     }
@@ -243,10 +248,7 @@ int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end, int *
                 if (i != 0)
                 {
                     if (i == len - 1)
-                    {
-                        printf("Пустой ввод\n");
                         return IO_ERR;
-                    }
                     if (*(str_beg + i - 1) != 'e' && (*(str_beg + i - 1)) != 'E' )
                     {
                         printf("\nНеправильное место знака");
@@ -258,20 +260,14 @@ int make_array(char *str_beg, char *str_end, int **num_beg, int **num_end, int *
                 }
                 else
                     if(i == len - 1)
-                    {
-                        printf("Пустой ввод\n");
                         return IO_ERR;
-                    }
             }
 
             //при с талкновении с е бегунок по массиву идет в обратную сторону, создавая значение степени типа int
             if ((*(str_beg + i) == 'e' || *(str_beg + i) == 'E'))
             {
                 if (i == len - 1 || i == 0 || (i == 1 && (*str_beg == '+' || *str_beg == '-')))
-                {
-                    printf("Пустой ввод\n");
                     return IO_ERR;
-                }
                 if (flag_e == 1)
                 {
                     printf("\nСодержит более одной е.");
