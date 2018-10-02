@@ -8,6 +8,8 @@
 #define IO_ERR 1
 #define MEM_ERR 2
 
+#define CHUNCK 10
+
 void instruction()
 {
     printf("ИНСТРУКЦИЯ К ВВОДУ\n");
@@ -41,7 +43,7 @@ int input_int(char **str_array_beg, char **str_array_end)
             {
                 if (length_of_array == length_of_string)
                 {
-                    length_of_array ++;
+                    length_of_array += CHUNCK;
                     char * tmp = realloc(*str_array_beg, length_of_array);
                     if(tmp)
                         *str_array_beg = tmp;
@@ -62,7 +64,12 @@ int input_int(char **str_array_beg, char **str_array_end)
             printf("Пустой ввод.\n");
             return IO_ERR;
         }
-        *str_array_end = *str_array_beg + length_of_array;
+        char * tmp = realloc(*str_array_beg, length_of_string);
+        if(tmp)
+            *str_array_beg = tmp;
+        else
+            return MEM_ERR;
+        *str_array_end = *str_array_beg + length_of_string;
         return OK;
     }
     else
@@ -338,12 +345,7 @@ int sum(int **ab, int **ae, int **bb, int **be, int **sb, int **se)
             return rc;
     }
     int r = 0;
-//    int *tmp = malloc(n*sizeof(int));
-//    if (tmp)
-//        *sb = tmp;
-//    else
-//        return MEM_ERR;
-    *sb = malloc(n*sizeof(int));
+    *sb = malloc(n*sizeof(int));//memory leak!
     if (!(*sb))
         return MEM_ERR;
     **sb = 1;
@@ -387,7 +389,8 @@ int mult(int **ab, int **ae, int p1, int **bb, int **be, int p2, int **mb, int *
         if (sum(&buf, &buf_end, &buf2, &buf2_end, mb, me) == MEM_ERR)
         {
             free(buf);
-            free(buf2);
+            if(buf2 != NULL)
+                free(buf2);
             return MEM_ERR;
         }
         free(buf);
