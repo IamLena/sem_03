@@ -1,2 +1,5 @@
+add.c
+add.h
+output.c
 types.h
 flats.c
