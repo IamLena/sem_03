@@ -6,11 +6,6 @@
 #include "types.h"
 #include "output.c"
 
-#define OK 0
-#define IO_ERR 101
-
-#define NEW 11
-#define OLD 22
 
 void clean_stdin(void)
 {
@@ -117,25 +112,45 @@ int input_bool(bool *value, char *key)
     printf("y/n: ");
     bool tmp;
     char c;
+    int rc;
     c = getchar();
     if (c != EOF && c != '\n')
     {
+        printf("I've read %c\n", c);
         if (c == 'y' || c == 'Y')
-            tmp =  true;
-        else if (c == 'n' || c == 'N')
-            tmp = false;
-        else
-            return IO_ERR;
-        if ((c = getchar()) == '\n')
         {
-            *value = tmp;
-            return tmp;
+            printf("YES\n");
+            tmp =  true;
+        }
+        else if (c == 'n' || c == 'N')
+        {
+            printf("NO\n");
+            tmp = false;
         }
         else
-            return IO_ERR;
+        {
+            printf("the first is not y or n\n");
+            rc = IO_ERR;
+        }
+        if ((c = getchar()) == '\n')
+        {
+            printf("that was enter, ok\n");
+            *value = tmp;
+            rc = OK;
+        }
+        else
+        {
+            printf("some more symbols\n");
+            rc =  IO_ERR;
+        }
+        clean_stdin();
     }
     else
-        return IO_ERR;
+    {
+        printf("empty input\n");
+        rc = IO_ERR;
+    }
+    return rc;
 }
 
 bool eq_str(char *s1, char *s2)

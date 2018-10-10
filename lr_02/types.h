@@ -7,6 +7,14 @@
 #include<stdbool.h>
 
 #define ADRESS_LEN 50
+#define CHUNK 5
+
+#define NEW 11
+#define OLD 22
+
+#define OK 101
+#define IO_ERR 202
+
 
 struct type1{
     bool finished;

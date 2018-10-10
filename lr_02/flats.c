@@ -6,11 +6,6 @@
 #include "add.c"
 #include "types.h"
 
-#define OK 0
-
-#define ADRESS_LEN 50
-#define CHUNK 5
-
 void menu(void)
 {
     printf("MENU\n");
@@ -22,20 +17,17 @@ void menu(void)
 }
 int main(void)
 {
-    menu();
-//    struct flat_t* flats = NULL;
-//    flats = malloc(CHUNK * sizeof(struct flat_t*));
-
-//    struct flat_t * myflat2 = {
-//        .id = 1,
-//        .adress = "here",
-//        .type.newflat.finished = true
-//    };
-//    printf("%s\n", myflat2.adress);
-//    printf("%hu\n", myflat2.type.oldflat.dwellers);
-    struct flat_t**flats = NULL;
-    int length = 0;
-    read("in.txt", flats, length);
-    //print_line(flats[0]);
-    return OK;
+    bool yn = true;
+    int rc;
+    while (yn)
+    {
+        menu();
+        rc = input_bool(&yn, "Do you want to continue work? ");
+        if (rc == IO_ERR)
+        {
+            printf("invalid input\n");
+            while (rc != OK)
+                rc = input_bool(&yn, "Do you want to continue work? ");
+        }
+    }
 }
