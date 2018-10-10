@@ -3,7 +3,7 @@
 #include<string.h>
 #include<stdbool.h>
 
-#include "types.h"
+#include "mytypes.h"
 
 void print_line(struct flat_t flat)
 {

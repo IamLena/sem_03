@@ -1,5 +1,5 @@
-add.c
-add.h
+app.c
+derectives.h
+input.c
+input.h
 output.c
-types.h
-flats.c
