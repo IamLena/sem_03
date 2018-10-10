@@ -2,9 +2,14 @@
 
 void clean_stdin(void)
 {
+    //printf("clearing! ");
     char c = 'a';
     while (c != '\n' && c != EOF)
+    {
         c = getchar();
+        //printf("%c", c);
+    }
+    //printf("\n");
 }
 
 int input_bool(bool *value, char *key)
@@ -60,6 +65,8 @@ int input_action(void)
                 act = ACTION_4;
             else if (c == '5')
                 act = ACTION_5;
+            else if (c == '6')
+                act = ACTION_6;
             else
                 act = IO_ERR;
         }
@@ -99,7 +106,9 @@ int input_string(char *str, int n, char *key)
         while (rc != OK)
             rc = input_bool(&yn, "Want to try again? ");
         if (yn == true)
-            input_string(str, n, key);
+            rc = input_string(str, n, key);
+        if (yn == false)
+            rc = IO_ERR;
     }
     return rc;
 }
@@ -112,63 +121,124 @@ int input_float(float *size, char *key)
     bool yn;
     if (scanf("%f", &tmp) != 1)
     {
+        clean_stdin();
         printf("Invalid input\n");
         rc = IO_ERR;
         while (rc != OK)
             rc = input_bool(&yn, "Want to try again? ");
         if (yn == true)
-            input_float(size, key);
-    }
-    else
-        *size = tmp;
-    return rc;
-}
-
-int input_usi(unsigned short int* a, char *key)
-{
-    printf("%s", key);
-    int rc = OK;
-    unsigned short int tmp;
-    if (scanf("%hu", &tmp) != 1)
-    {
-        printf("Invalid input\n");
-        printf("Want to try again? y/n \n");
-        char c;
-        clean_stdin();
-        if(((c = getchar()) != EOF) && (c == 'y' || c == 'Y') && ((c = getchar()) == '\n'))
-            rc = input_usi(a, key);
-        else
+            rc = input_float(size, key);
+        if (yn == false)
             rc = IO_ERR;
     }
     else
-        *a = tmp;
-    clean_stdin();
+    {
+        if (tmp <= 0)
+        {
+            printf("<=0\n");
+            clean_stdin();
+            printf("Invalid input\n");
+            rc = IO_ERR;
+            while (rc != OK)
+                rc = input_bool(&yn, "Want to try again? ");
+            if (yn == true)
+                rc = input_float(size, key);
+            if (yn == false)
+                rc = IO_ERR;
+        }
+        else
+        {
+            *size = tmp;
+            clean_stdin();
+        }
+    }
     return rc;
 }
 
-int input_ui(unsigned int* a, char *key)
+int input_si(short int *a, char *key)
 {
+    bool yn;
     printf("%s", key);
     int rc = OK;
-    unsigned int tmp;
-    if (scanf("%ud", &tmp) != 1)
+    short int tmp;
+    if (scanf("%hi", &tmp) != 1)
     {
-        printf("Invalid input\n");
-        printf("Want to try again? y/n \n");
-        char c;
         clean_stdin();
-        if(((c = getchar()) != EOF) && (c == 'y' || c == 'Y') && ((c = getchar()) == '\n'))
-            rc = input_ui(a, key);
-        else
+        printf("Invalid input\n");
+        rc = IO_ERR;
+        while (rc != OK)
+            rc = input_bool(&yn, "Want to try again? ");
+        if (yn == true)
+            rc = input_si(a, key);
+        if (yn == false)
             rc = IO_ERR;
     }
     else
-        *a = tmp;
-    clean_stdin();
+    {
+        if(!(0 < tmp && tmp <= 32767))
+        {
+            printf("<=0\n");
+            clean_stdin();
+            printf("Invalid input\n");
+            rc = IO_ERR;
+            while (rc != OK)
+                rc = input_bool(&yn, "Want to try again? ");
+            if (yn == true)
+                rc = input_si(a, key);
+            if (yn == false)
+                rc = IO_ERR;
+        }
+        else
+        {
+            *a = tmp;
+            clean_stdin();
+        }
+    }
     return rc;
 }
 
-int add_line(struct flat_t**flats, int length)
+int input_int(int* a, char *key)
+{
+    bool yn;
+    printf("%s", key);
+    int rc = OK;
+    int tmp;
+    if (scanf("%d", &tmp) != 1)
+    {
+        clean_stdin();
+        printf("Invalid input\n");
+        rc = IO_ERR;
+        while (rc != OK)
+            rc = input_bool(&yn, "Want to try again? ");
+        if (yn == true)
+            rc = input_int(a, key);
+        if (yn == false)
+            rc = IO_ERR;
+    }
+    else
+    {
+        if (tmp < 0 || tmp > 4294967295)
+        {
+            clean_stdin();
+            printf("Invalid input\n");
+            rc = IO_ERR;
+            while (rc != OK)
+                rc = input_bool(&yn, "Want to try again? ");
+            if (yn == true)
+                rc = input_int(a, key);
+            if (yn == false)
+                rc = IO_ERR;
+        }
+        else
+        {
+            *a = tmp;
+            clean_stdin();
+        }
+    }
+    return rc;
+}
+
+int add_line(ft*flats, int length)
 {
     int rc;
     printf("adding line\n");
@@ -181,17 +251,16 @@ int add_line(struct flat_t**flats, int length)
     rc = input_float(&new.size, "Size (m^2): ");
     if (rc != OK)
         return rc;
-    rc = input_usi(&new.rooms, "How many rooms does it have? ");
+    rc = input_si(&new.rooms, "How many rooms does it have? ");
     if (rc != OK)
         return rc;
-    rc = input_ui(&new.price, "What is the price of 1 sq.m? ");
+    rc = input_int(&new.price, "What is the price of 1 sq.m? ");
     if (rc != OK)
         return rc;
     rc = input_bool(&new.is_new, "Is the flat new? ");
-    printf("rc - %d", rc);
     if (rc == IO_ERR)
         return rc;
-    if (rc == 1)
+    if (new.is_new)
     {
         printf("new flat\n");
         rc = input_bool(&new.type.newflat.finished, "Is it repaired? ");
@@ -200,15 +269,15 @@ int add_line(struct flat_t**flats, int length)
     }
     else
     {
-        rc = input_usi(&new.type.oldflat.year, "When was it built? ");
+        rc = input_si(&new.type.oldflat.year, "When was it built? ");
         if (rc != OK)
             return rc;
-        rc = input_usi(&new.type.oldflat.owners, "How many people have owned it? ");
+        rc = input_si(&new.type.oldflat.owners, "How many people have owned it? ");
         if (rc != OK)
             return rc;
-        rc = input_usi(&new.type.oldflat.dwellers, "How many people lived here before? ");
+        rc = input_si(&new.type.oldflat.dwellers, "How many people lived here before? ");
         if (rc != OK)
-                return rc;
+            return rc;
         rc = input_bool(&new.type.oldflat.animal, "Were there any animals? ");
         if (rc == IO_ERR)
             return rc;
@@ -230,13 +299,27 @@ int add_line(struct flat_t**flats, int length)
         else
             printf("without animals");
     }
-    return OK;
+    bool yn;
+    rc = IO_ERR;
+    while (rc != OK)
+        rc = input_bool(&yn, "\nIs this element correct? Do you want to add it? ");
+    if (yn == true)
+    {
+        *(flats + length) = new;
+        printf("Added\n");
+    }
+    else
+    {
+        printf("The line isn't added.\n");
+        rc = IO_ERR;
+    }
+
+
+    return rc;
 }
 
-int main(void)
-{
-    ft *flats[10];
-    add_line(flats, 0);
-
-
-}
+//int main(void)
+//{
+//    ft *flats[10];
+//    add_line(flats, 0);
+//}

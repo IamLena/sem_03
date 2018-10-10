@@ -1,3 +1,6 @@
+output.h
+action.c
+action.h
 app.c
 derectives.h
 input.c

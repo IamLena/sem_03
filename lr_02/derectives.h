@@ -6,9 +6,10 @@
 #include<string.h>
 #include<stdbool.h>
 #include<ctype.h>
+#include<math.h>
 
 #define ADRESS_LEN 50
-#define CHUNK 33
+#define CHUNK 5
 
 #define NEW 11
 #define OLD 22
@@ -21,15 +22,16 @@
 #define ACTION_3 3
 #define ACTION_4 4
 #define ACTION_5 5
+#define ACTION_6 6
 
 struct type1{
     bool finished;
 };
 
 struct type2{
-    unsigned short int year;
-    unsigned short int owners;
-    unsigned short int dwellers;
+    short int year;
+    short int owners;
+    short int dwellers;
     bool animal;
 };
 
@@ -38,8 +40,8 @@ struct flat_t
     unsigned short int id;
     char adress[ADRESS_LEN];
     float size;
-    unsigned short int rooms;
-    unsigned int price;
+    short int rooms;
+    int price;
     bool is_new;
     union
     {

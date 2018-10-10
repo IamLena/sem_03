@@ -1,9 +1,12 @@
 #include "derectives.h"
 #include "input.h"
+#include "action.h"
+#include "output.h"
 
 void menu(void)
 {
     printf("MENU\n");
+    printf("6) Create a database\n");
     printf("1) Print table\n");// 40 элементов
     printf("2) Add an element\n");
     printf("3) Delete an element\n");
@@ -13,6 +16,7 @@ void menu(void)
 }
 int main(void)
 {
+    ft**flats = NULL;
     bool yn = true;
     int rc;
     while (yn)
@@ -29,14 +33,27 @@ int main(void)
             printf("ACTION 4\n");
         else if (action == ACTION_5)
             printf("ACTION 5\n");
+        else if (action == ACTION_6)
+        {
+            //ft**flats = NULL;
+            int length = 0;
+            flats = create(&length);
+            if (flats)
+            {
+                printf("hey\n");
+                //print_line(flats[0][0]);
+                print_table(flats, length);
+            }
+            else
+                printf("nope\n");
+        }
         else
             printf("Invalid input\n");
-        rc = input_bool(&yn, "Do you want to continue work? ");
-        if (rc == IO_ERR)
-        {
-            printf("invalid input\n");
-            while (rc != OK)
-                rc = input_bool(&yn, "Do you want to continue work? ");
-        }
+        rc = IO_ERR;
+        while (rc != OK)
+            rc = input_bool(&yn, "Do you want to continue work? ");
     }
+    return OK;
+    free (flats[0]);
+    free(flats);
 }
