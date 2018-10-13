@@ -93,6 +93,7 @@ int input_string(char *str, int n, char *key)
     bool yn;
     while ((c = getchar()) != '\n' && c != EOF)
     {
+        printf("got char - %c\n", c);
         if (i < n - 1)
             str[i++] = c;
         else
