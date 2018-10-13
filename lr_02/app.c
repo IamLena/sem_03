@@ -8,9 +8,11 @@ void menu(void)
     printf("MENU\n");
     printf("1) Print table\n");// 40 элементов
     printf("2) Open a database\n");
-    printf("2) Add an element\n");
-    printf("3) Delete an element\n");
-    printf("4) Search\n");//поиск информации по вариантному полю записи
+    printf("3) Create a new database\n");
+    printf("4) Add an element\n");
+    printf("5) Save the table\n");
+    printf("5) Delete an element\n");
+    printf("6) Search\n");//поиск информации по вариантному полю записи
     //Найти все вторичное 2-х комнатное жилье в указанном ценовом диапазоне без животных
     printf("5) Sort\n");//упорядочить по ключу 1 способ; 2 способ сортировки + время вывести
     printf("6) Create a database\n");
@@ -32,7 +34,7 @@ int main(void)
         }
         else if (action == ACTION_2)
         {
-            char* file = "";
+            char file[20];
             if (input_string(file, 20, "Input name of the file with table: ") == IO_ERR)
                 printf("Invalid file name, can not open the table.\n");
             else
@@ -43,16 +45,61 @@ int main(void)
             }
         }
         else if (action == ACTION_3)
-            printf("ACTION 3\n");
+        {
+            flats = create(&length);
+            if (flats == NULL)
+                printf("Can not create a table.\n");
+            else
+                printf("The database is created.\n");
+        }
         else if (action == ACTION_4)
         {
-            read_table("res.txt", &flats, &length);
-            print_table(flats, length);
+            printf("action 4\n");
+            ft** tmp = realloc(flats, (length + 1) * sizeof(ft*));
+            if (tmp)
+            {
+                ft* data = NULL;
+                data = malloc((length + 1) * sizeof(ft));
+                if (data)
+                {
+                    flats = tmp;
+                    flats[length] = &data[length];
+                    if (add_line(data, length) == OK)
+                    {
+                        printf("Added\n");
+                        length ++;
+                    }
+                    else
+                    {
+                        printf("can not add a line\n");
+                        ft** tmp = realloc(flats, length * sizeof(ft*));
+                        if (tmp)
+                        {
+                            ft* tmp2 = malloc(length * sizeof(ft));
+                            if (tmp2)
+                            {
+                                data = tmp2;
+                                flats = tmp;
+                            }
+                        }
+                    }
+                }
+                else
+                    printf("Can not add a line\n");
+            }
+            else printf("Can not add a line\n");
         }
         else if (action == ACTION_5)
         {
-            printf("action 5");
-            //save("res.txt", flats, length);
+            char file[20];
+            if (input_string(file, 20, "Input name of the file with table: ") == IO_ERR)
+                printf("Invalid file name, can not open the table.\n");
+            else
+            {
+                printf("your file is - %s\n", file);
+                if (save_table(file, flats, length) == OK)
+                    printf("Saved.\n");
+            }
         }
         else if (action == ACTION_6)
         {

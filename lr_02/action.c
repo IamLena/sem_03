@@ -81,35 +81,11 @@ ft** create(int* length)
     return flats;
 }
 
-int save(char* filename, ft** flats, int length)
-{
-    if(flats == NULL || length == 0)
-        return IO_ERR;
-    printf("saving\n");
-    print_table(flats, length);
-    FILE *f;
-    f = fopen(filename, "wb");
-    if (f)
-    {
-        for (int i = 0; i < length; i ++)
-        {
-            int code = fwrite(flats[i], sizeof(ft), 1, f);
-            printf("%d\n", code);
-        }
-        return OK;
-    }
-    else
-    {
-        printf("Can not save.\n");
-        return IO_ERR;
-    }
-}
-
 int save_table(char* filename, ft**flats, int length)
 {
     if (length == 0 || flats == NULL)
     {
-        printf("wrong params\n");
+        printf("Can not save an empty database\n");
         return IO_ERR;
     }
     FILE *f = fopen(filename, "wb");
@@ -177,6 +153,7 @@ int read_table(char* filename, ft***flats, int *length)
             }
         }
         *flats = tmp_ptr;
+        *length = rlen;
         fclose(f);
         return OK;
     }
