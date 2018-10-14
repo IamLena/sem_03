@@ -11,11 +11,11 @@ void menu(void)
     printf("3) Create a new database\n");
     printf("4) Add an element\n");
     printf("5) Save the table\n");
-    printf("5) Delete an element\n");
-    printf("6) Search\n");//поиск информации по вариантному полю записи
+    printf("6) Delete an element\n");
+    printf("7) Search\n");//поиск информации по вариантному полю записи
     //Найти все вторичное 2-х комнатное жилье в указанном ценовом диапазоне без животных
-    printf("5) Sort\n");//упорядочить по ключу 1 способ; 2 способ сортировки + время вывести
-    printf("6) Create a database\n");
+    printf("8) Sort\n");//упорядочить по ключу 1 способ; 2 способ сортировки + время вывести
+    printf("9) Create a database\n");
 }
 int main(void)
 {
@@ -26,14 +26,37 @@ int main(void)
     while (yn)
     {
         menu();
-        int action = input_action();
+        int action = input_action();//print
         if (action == ACTION_1)
         {
             if (print_table(flats, length) == IO_ERR)
                 printf("There is no data.\n");
         }
-        else if (action == ACTION_2)
+        else if (action == ACTION_2)//open
         {
+            if (flats != NULL)
+            {
+                printf("Your existing table can be deleted.\nMake sure you have saved it.\n");
+                bool yn;
+                int code = 1;
+                while (code != OK)
+                {
+                    code = input_bool(&yn, "Do you want to save it now? ");
+                    if (yn == true)
+                    {
+                        char file[20];
+                        if (input_string(file, 20, "Input name of the file with table: ") == IO_ERR)
+                            printf("Invalid file name, can not open the table.\n");
+                        else
+                        {
+                            printf("your file is - %s\n", file);
+                            if (save_table(file, flats, length) == OK)
+                                printf("Saved.\n");
+                        }
+                    }
+                }
+            }
+            printf("OPENING TABLE\n");
             char file[20];
             if (input_string(file, 20, "Input name of the file with table: ") == IO_ERR)
                 printf("Invalid file name, can not open the table.\n");
@@ -44,15 +67,37 @@ int main(void)
                     printf("Opened, you can proceed to work.\n");
             }
         }
-        else if (action == ACTION_3)
+        else if (action == ACTION_3)//create
         {
+            if (flats != NULL)
+            {
+                printf("Your existing table can be deleted.\nMake sure you have saved it.\n");
+                bool yn;
+                int code = 1;
+                while (code != OK)
+                {
+                    code = input_bool(&yn, "Do you want to save it now? ");
+                    if (yn == true)
+                    {
+                        char file[20];
+                        if (input_string(file, 20, "Input name of the file with table: ") == IO_ERR)
+                            printf("Invalid file name, can not open the table.\n");
+                        else
+                        {
+                            printf("your file is - %s\n", file);
+                            if (save_table(file, flats, length) == OK)
+                                printf("Saved.\n");
+                        }
+                    }
+                }
+            }
             flats = create(&length);
             if (flats == NULL)
                 printf("Can not create a table.\n");
             else
                 printf("The database is created.\n");
         }
-        else if (action == ACTION_4)
+        else if (action == ACTION_4)//add an el
         {
             printf("action 4\n");
             ft** tmp = realloc(flats, (length + 1) * sizeof(ft*));
@@ -89,7 +134,7 @@ int main(void)
             }
             else printf("Can not add a line\n");
         }
-        else if (action == ACTION_5)
+        else if (action == ACTION_5)//save
         {
             char file[20];
             if (input_string(file, 20, "Input name of the file with table: ") == IO_ERR)
@@ -101,7 +146,7 @@ int main(void)
                     printf("Saved.\n");
             }
         }
-        else if (action == ACTION_6)
+        else if (action == ACTION_6)//delete
         {
             //ft**flats = NULL;
 //            int length = 0;
