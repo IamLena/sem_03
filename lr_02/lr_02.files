@@ -1,4 +1,6 @@
 delete.c
+delete.h
+delete1.c
 foo.c
 output.h
 action.c

@@ -2,6 +2,7 @@
 #include "input.h"
 #include "action.h"
 #include "output.h"
+#include "delete.h"
 
 void menu(void)
 {
@@ -95,7 +96,11 @@ int main(void)
             if (flats == NULL)
                 printf("Can not create a table.\n");
             else
+            {
                 printf("The database is created.\n");
+                printf("LINE\n");
+                print_line(*flats[1]);
+            }
         }
         else if (action == ACTION_4)//add an el
         {
@@ -148,17 +153,8 @@ int main(void)
         }
         else if (action == ACTION_6)//delete
         {
-            //ft**flats = NULL;
-//            int length = 0;
-            flats = create(&length);
-            if (flats)
-            {
-                printf("hey\n");
-                //print_line(flats[0][0]);
-                print_table(flats, length);
-            }
-            else
-                printf("nope\n");
+            delete(flats, &length);
+            print_table(flats, length);
         }
         else
             printf("Invalid input\n");

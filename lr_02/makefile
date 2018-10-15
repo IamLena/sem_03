@@ -13,7 +13,10 @@ app.o: app.c *.h
 action.o: action.c *.h
 	$(CC) $(PARAMS) -c action.c
 
-app.exe: app.o input.o action.o output.o
+delete.o: delete.c *.h
+	$(CC) $(PARAMS) -c delete.c
+
+app.exe: app.o input.o action.o output.o delete.o
 	$(CC) -o app.exe $^
 
 make clean:

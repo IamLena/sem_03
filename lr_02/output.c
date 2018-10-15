@@ -23,10 +23,8 @@ void print_line(struct flat_t flat)
     printf("\n");
 }
 
-int print_table(struct flat_t**flats, int length)
+void print_head(void)
 {
-    if(flats == NULL || length == 0)
-        return IO_ERR;
     printf("your table:\n");
     printf("------------------------------");
     printf("------------------------------");
@@ -34,6 +32,7 @@ int print_table(struct flat_t**flats, int length)
     printf("------------------------------");
     printf("-------------");
     printf("\n");
+    printf("   ");
     printf("|  id  |");
     printf("              adress                    ");
     printf("|  size    |");
@@ -48,7 +47,16 @@ int print_table(struct flat_t**flats, int length)
     printf("------------------------------");
     printf("-------------");
     printf("\n");
+}
+int print_table(struct flat_t**flats, int length)
+{
+    if(flats == NULL || length == 0)
+        return IO_ERR;
+    print_head();
     for (int i = 0; i < length; i ++)
+    {
+        printf("%3d", i + 1);
         print_line(*flats[i]);
+    }
     return OK;
 }

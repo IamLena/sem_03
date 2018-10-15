@@ -16,6 +16,7 @@
 
 #define OK 101
 #define IO_ERR 202
+#define DEL_ERR 303
 
 #define ACTION_1 1
 #define ACTION_2 2
