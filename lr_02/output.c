@@ -32,7 +32,7 @@ void print_head(void)
     printf("------------------------------");
     printf("-------------");
     printf("\n");
-    printf("   ");
+    printf(" # ");
     printf("|  id  |");
     printf("              adress                    ");
     printf("|  size    |");

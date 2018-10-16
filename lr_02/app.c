@@ -153,8 +153,26 @@ int main(void)
         }
         else if (action == ACTION_6)//delete
         {
-            delete(flats, &length);
+            if (delete(flats, &length) == OK)
+            {
+                printf("here\n");
+                ft **tmp1 = realloc(flats, length * sizeof(ft*));
+                ft *tmp2 = realloc(flats[0], length * sizeof(ft));
+                if (tmp1 && tmp2)
+                {
+                    printf("reallocating\n");
+                    flats = tmp1;
+                    for (int i = 0; i < length; i ++)
+                        flats[i] = &tmp2[i];
+                }
+            }
+            print_line(*flats[length]);
             print_table(flats, length);
+        }
+        else if (action == ACTION_7)//search
+        {
+            if (search(flats, length) == IO_ERR)
+                printf("Can not find such elements.\n");
         }
         else
             printf("Invalid input\n");
@@ -162,11 +180,30 @@ int main(void)
         while (rc != OK)
             rc = input_bool(&yn, "Do you want to continue work? ");
     }
-    return OK;
     if (flats != NULL)
     {
+        printf("Your existing table can be deleted.\nMake sure you have saved it.\n");
+        bool yn;
+        int code = 1;
+        while (code != OK)
+        {
+            code = input_bool(&yn, "Do you want to save it now? ");
+            if (yn == true)
+            {
+                char file[20];
+                if (input_string(file, 20, "Input name of the file with table: ") == IO_ERR)
+                    printf("Invalid file name, can not open the table.\n");
+                else
+                {
+                    printf("your file is - %s\n", file);
+                    if (save_table(file, flats, length) == OK)
+                        printf("Saved.\n");
+                }
+            }
+        }
         if (flats[0] != NULL)
             free (flats[0]);
         free(flats);
     }
+    return OK;
 }

@@ -25,14 +25,11 @@ int delete(ft **flats, int *length)
         if (index < *length)
         {
             print_line(*flats[index]);
-            memmove(flats[index - 1], flats[index], (*length - index));
+            memmove(flats[index - 1], flats[index], (*length - index) * sizeof(ft));
         }
-        //free(flats[*length - 1]);
-        //*length -= 1;
-        printf("INDEX - 1\n");
-        print_line(*flats[index - 1]);
-        printf("INDEX\n");
-        print_line(*flats[index]);
+        *length -= 1;
+//        free(flats[*length]);
+//        flats[*length] = NULL;
         print_table(flats, *length);
     }
     return rc;

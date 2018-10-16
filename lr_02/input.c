@@ -67,6 +67,8 @@ int input_action(void)
                 act = ACTION_5;
             else if (c == '6')
                 act = ACTION_6;
+            else if (c == '7')
+                act = ACTION_7;
             else
                 act = IO_ERR;
         }

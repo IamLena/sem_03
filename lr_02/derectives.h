@@ -24,6 +24,7 @@
 #define ACTION_4 4
 #define ACTION_5 5
 #define ACTION_6 6
+#define ACTION_7 7
 
 struct type1{
     bool finished;

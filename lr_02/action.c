@@ -163,3 +163,23 @@ int read_table(char* filename, ft***flats, int *length)
         return IO_ERR;
     }
 }
+
+int search(ft **flats, int length)//sorting price with keys
+//Найти все вторичное 2-х комнатное жилье в указанном ценовом диапазоне без животных
+{
+    int lp, rp;
+    if (input_int(&lp, "Input the lowest price: ") == IO_ERR)
+        return IO_ERR;
+    if (input_int(&rp, "Input the highest price: ") == IO_ERR)
+        return IO_ERR;
+    print_head();
+    for (int i = 0; i < length; i ++)
+    {
+        if (flats[i]->rooms == 2 && flats[i]->type.oldflat.animal == false && flats[i]->is_new == false && flats[i]->price > lp && flats[i]->price < rp)
+        {
+            printf("%3d", i);
+            print_line(*flats[i]);
+        }
+    }
+    return OK;
+}

@@ -1,5 +1,10 @@
 CC := gcc
-PARAMS := -std=c99 -Wall -Werror -pedantic
+PARAMS := -std=c99 -Wall -Werror -pedantic -ggdb
+
+ifeq ($(mode), debug)
+	PARAMS += -g3
+endif
+
 
 input.o: input.c *.h
 	$(CC) $(PARAMS) -c input.c
