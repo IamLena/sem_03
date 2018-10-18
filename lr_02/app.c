@@ -1,6 +1,6 @@
 #include "derectives.h"
 #include "input.h"
-#include "action.h"
+#include "add.h"
 #include "output.h"
 #include "delete.h"
 
@@ -173,6 +173,11 @@ int main(void)
         {
             if (search(flats, length) == IO_ERR)
                 printf("Can not find such elements.\n");
+        }
+        else if (action == ACTION_8)//sort
+        {
+            sort(flats, length);
+            sort_flats(flats, length);
         }
         else
             printf("Invalid input\n");

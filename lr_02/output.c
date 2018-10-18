@@ -30,7 +30,7 @@ void print_head(void)
     printf("------------------------------");
     printf("------------------------------");
     printf("------------------------------");
-    printf("-------------");
+    printf("-----------------");
     printf("\n");
     printf(" # ");
     printf("|  id  |");
@@ -45,12 +45,12 @@ void print_head(void)
     printf("------------------------------");
     printf("------------------------------");
     printf("------------------------------");
-    printf("-------------");
+    printf("----------------");
     printf("\n");
 }
 int print_table(struct flat_t**flats, int length)
 {
-    if(flats == NULL || length == 0)
+    if(flats == NULL || *flats == NULL || length == 0)
         return IO_ERR;
     print_head();
     for (int i = 0; i < length; i ++)

@@ -25,6 +25,7 @@
 #define ACTION_5 5
 #define ACTION_6 6
 #define ACTION_7 7
+#define ACTION_8 8
 
 struct type1{
     bool finished;
@@ -53,6 +54,13 @@ struct flat_t
 
 };
 
+struct keys_el
+{
+    int index;
+    int price;
+};
+
+typedef struct keys_el k_el;
 typedef struct flat_t ft;
 
 #endif // DERECTIVES_H

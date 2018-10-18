@@ -1,10 +1,12 @@
+sort.h
+sort.c
+add.c
+add.h
 delete.c
 delete.h
-delete1.c
-foo.c
+file.c
+file.h
 output.h
-action.c
-action.h
 app.c
 derectives.h
 input.c

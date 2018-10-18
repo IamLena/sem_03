@@ -1,4 +1,5 @@
 #include "derectives.h"
+#include "input.h"
 
 void clean_stdin(void)
 {
@@ -69,6 +70,8 @@ int input_action(void)
                 act = ACTION_6;
             else if (c == '7')
                 act = ACTION_7;
+            else if (c == '8')
+                act = ACTION_8;
             else
                 act = IO_ERR;
         }
@@ -239,89 +242,3 @@ int input_int(int* a, char *key)
     }
     return rc;
 }
-
-int add_line(ft*flats, int length)
-{
-    int rc;
-    printf("adding line\n");
-    struct flat_t new;
-
-    new.id = length;
-    rc = input_string(new.adress, ADRESS_LEN, "Adress (<50 symbols): ");
-    if (rc != OK)
-        return IO_ERR;
-    rc = input_float(&new.size, "Size (m^2): ");
-    if (rc != OK)
-        return rc;
-    rc = input_si(&new.rooms, "How many rooms does it have? ");
-    if (rc != OK)
-        return rc;
-    rc = input_int(&new.price, "What is the price of 1 sq.m? ");
-    if (rc != OK)
-        return rc;
-    rc = input_bool(&new.is_new, "Is the flat new? ");
-    if (rc == IO_ERR)
-        return rc;
-    if (new.is_new)
-    {
-        printf("new flat\n");
-        rc = input_bool(&new.type.newflat.finished, "Is it repaired? ");
-        if (rc == IO_ERR)
-            return rc;
-    }
-    else
-    {
-        rc = input_si(&new.type.oldflat.year, "When was it built? ");
-        if (rc != OK)
-            return rc;
-        rc = input_si(&new.type.oldflat.owners, "How many people have owned it? ");
-        if (rc != OK)
-            return rc;
-        rc = input_si(&new.type.oldflat.dwellers, "How many people lived here before? ");
-        if (rc != OK)
-            return rc;
-        rc = input_bool(&new.type.oldflat.animal, "Were there any animals? ");
-        if (rc == IO_ERR)
-            return rc;
-    }
-    printf("%hu %s %f %hu %hd ", new.id, new.adress, new.size, new.rooms, new.price);
-    if (new.is_new == true)
-    {
-        printf("new ");
-        if (new.type.newflat.finished == true)
-            printf("finished ");
-        else
-            printf("not finished");
-    }
-    else
-    {
-        printf("old %hu %hu %hu ", new.type.oldflat.year, new.type.oldflat.owners, new.type.oldflat.dwellers);
-        if (new.type.oldflat.animal == true)
-            printf("with animals");
-        else
-            printf("without animals");
-    }
-    bool yn;
-    rc = IO_ERR;
-    while (rc != OK)
-        rc = input_bool(&yn, "\nIs this element correct? Do you want to add it? ");
-    if (yn == true)
-    {
-        *(flats + length) = new;
-        printf("Added\n");
-    }
-    else
-    {
-        printf("The line isn't added.\n");
-        rc = IO_ERR;
-    }
-
-
-    return rc;
-}
-
-//int main(void)
-//{
-//    ft *flats[10];
-//    add_line(flats, 0);
-//}
