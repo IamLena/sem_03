@@ -11,8 +11,8 @@
 #define ADRESS_LEN 50
 #define CHUNK 5
 
-#define NEW 11
-#define OLD 22
+#define NEW 111
+#define OLD 222
 
 #define OK 101
 #define IO_ERR 202
@@ -26,6 +26,10 @@
 #define ACTION_6 6
 #define ACTION_7 7
 #define ACTION_8 8
+#define ACTION_9 9
+#define ACTION_10 10
+#define ACTION_11 11
+#define ACTION_12 12
 
 struct type1{
     bool finished;

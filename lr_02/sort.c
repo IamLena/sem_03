@@ -1,4 +1,5 @@
 #include "derectives.h"
+#include "output.h"
 #include "sort.h"
 
 void print_keys (k_el *table, int length)

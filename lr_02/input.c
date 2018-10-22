@@ -49,39 +49,49 @@ int input_bool(bool *value, char *key)
 int input_action(void)
 {
     int act;
-    char c;
+    char c, c2, c3;
     printf("chose an action (input the number): ");
     c = getchar();
+    c2 = getchar();
+    c3 = getchar();
     if (c != EOF && c != '\n')
     {
         if (isdigit(c))
         {
             if (c == '1')
-                act = ACTION_1;
-            else if (c == '2')
+                if (c2 == '\n')
+                    act = ACTION_1;
+                else if (c2 == '0' && c3 == '\n')
+                    act = ACTION_10;
+                else if (c2 == '1' && c3 == '\n')
+                    act = ACTION_11;
+                else if (c2 == '2' && c3 == '\n')
+                    act = ACTION_12;
+                else
+                    act = IO_ERR;
+            else if (c == '2' && c2 == '\n')
                 act = ACTION_2;
-            else if (c == '3')
+            else if (c == '3' && c2 == '\n')
                 act = ACTION_3;
-            else if (c == '4')
+            else if (c == '4' && c2 == '\n')
                 act = ACTION_4;
-            else if (c == '5')
+            else if (c == '5' && c2 == '\n')
                 act = ACTION_5;
-            else if (c == '6')
+            else if (c == '6' && c2 == '\n')
                 act = ACTION_6;
-            else if (c == '7')
+            else if (c == '7' && c2 == '\n')
                 act = ACTION_7;
-            else if (c == '8')
+            else if (c == '8' && c2 == '\n')
                 act = ACTION_8;
+            else if (c == '9' && c2 == '\n')
+                act = ACTION_9;
             else
                 act = IO_ERR;
         }
         else
             act = IO_ERR;
-        if (((c = getchar()) != '\n'))
-        {
+        if (act == IO_ERR)
             clean_stdin();
-            act =  IO_ERR;
-        }
     }
     else
         act = IO_ERR;
