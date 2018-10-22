@@ -157,9 +157,9 @@ int main(void)
                     for (int i = 0; i < length; i ++)
                         flats[i] = &tmp2[i];
                 }
+                print_line(*flats[length]);
+                print_table(flats, length);
             }
-            print_line(*flats[length]);
-            print_table(flats, length);
         }
         else if (action == ACTION_6)//search
         {

@@ -52,23 +52,28 @@ int input_action(void)
     char c, c2, c3;
     printf("chose an action (input the number): ");
     c = getchar();
-    c2 = getchar();
-    c3 = getchar();
     if (c != EOF && c != '\n')
     {
         if (isdigit(c))
         {
+            c2 = getchar();
             if (c == '1')
+            {
                 if (c2 == '\n')
                     act = ACTION_1;
-                else if (c2 == '0' && c3 == '\n')
-                    act = ACTION_10;
-                else if (c2 == '1' && c3 == '\n')
-                    act = ACTION_11;
-                else if (c2 == '2' && c3 == '\n')
-                    act = ACTION_12;
                 else
-                    act = IO_ERR;
+                {
+                    c3 = getchar();
+                    if (c2 == '0' && c3 == '\n')
+                        act = ACTION_10;
+                    else if (c2 == '1' && c3 == '\n')
+                        act = ACTION_11;
+                    else if (c2 == '2' && c3 == '\n')
+                        act = ACTION_12;
+                    else
+                        act = IO_ERR;
+                }
+            }
             else if (c == '2' && c2 == '\n')
                 act = ACTION_2;
             else if (c == '3' && c2 == '\n')

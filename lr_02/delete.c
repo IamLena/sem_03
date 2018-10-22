@@ -12,7 +12,7 @@ int delete(ft **flats, int *length)
     int index;
     int rc = OK;
     print_table(flats, *length);
-    input_int(&index, "Input id of the element you want to delete: ");
+    input_int(&index, "Input the number of the element you want to delete: ");
     printf("the value is %d\n", index);
     if (index <= 0 || index > *length)
     {
@@ -28,13 +28,14 @@ int delete(ft **flats, int *length)
             printf("replace with this\n");
             print_line(*flats[index]);
             printf("moving %d\n", (int)(*length - index));
+            printf("moving %d\n", (int)((*length - index)*sizeof(ft)));
             memmove(flats[index - 1], flats[index], (*length - index) * sizeof(ft));
         }
         *length -= 1;
 //        free(flats[*length]);
 //        flats[*length] = NULL;
         printf("table in del\n");
-        print_table(flats, *length);
+        print_table(flats, *length + 1);
     }
     return rc;
 }
