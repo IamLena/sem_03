@@ -26,7 +26,6 @@ int add_line(ft*flats, int length)
         return rc;
     if (new.is_new)
     {
-        printf("new flat\n");
         rc = input_bool(&new.type.newflat.finished, "Is it repaired? ");
         if (rc == IO_ERR)
             return rc;
@@ -46,7 +45,7 @@ int add_line(ft*flats, int length)
         if (rc == IO_ERR)
             return rc;
     }
-    printf("%hu %s %f %hu %hd ", new.id, new.adress, new.size, new.rooms, new.price);
+    printf("%hu %s %.3f %hu %d ", new.id, new.adress, new.size, new.rooms, new.price);
     if (new.is_new == true)
     {
         printf("new ");

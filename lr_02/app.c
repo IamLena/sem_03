@@ -171,16 +171,41 @@ int main(void)
         {
             printf("SORTING WITH KEYS\n");
             sort(flats, length);
-
         }
         else if (action == ACTION_8)//sort without keys
         {
             printf("SORTING WITHOUT KEYS\n");
-           sort_flats(flats, length);
+            sort_flats(flats, length);
         }
         else if (action == 9)
         {
-            printf("EFFICIENCY\n");
+            if (flats == NULL)
+                printf("open or create a table first\n");
+            else
+            {
+            printf("\t....\nCALCULATING EFFICIENCY\n");
+            unsigned long t1, t2;
+            t1 =  tick();
+            sort(flats, length);
+            t2 = tick();
+            unsigned long t_sort1 = t2 - t1;
+            t1 =  tick();
+            sort_shaker(flats, length);
+            t2 = tick();
+            unsigned long t_sort2 = t2 - t1;
+            t1 =  tick();
+            sort_flats(flats, length);
+            t2 = tick();
+            unsigned long t_sort3 = t2 - t1;
+            t1 =  tick();
+            sort_flats_shaker(flats, length);
+            t2 = tick();
+            unsigned long t_sort4 = t2 - t1;
+            printf("Bubble sort keys = %lu\n", t_sort1);
+            printf("Shaker sort keys = %lu\n", t_sort2);
+            printf("Bubble sort the table (pointers) = %lu\n", t_sort3);
+            printf("Shaker sort the table (pointers) = %lu\n", t_sort4);
+            }
         }
         else if (action == ACTION_10)//save
         {

@@ -59,3 +59,10 @@ int search(ft **flats, int length)//sorting price with keys
     }
     return OK;
 }
+
+unsigned long tick(void)
+{
+    unsigned long long d;
+    __asm__ __volatile__ ("rdtsc" : "=A" (d) );
+    return d;
+}
