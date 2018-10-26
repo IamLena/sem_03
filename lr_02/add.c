@@ -5,6 +5,7 @@
 int add_line(ft*flats, int length)
 {
     int rc;
+    bool yn;
     printf("adding line\n");
     struct flat_t new;
 
@@ -22,13 +23,27 @@ int add_line(ft*flats, int length)
     if (rc != OK)
         return rc;
     rc = input_bool(&new.is_new, "Is the flat new? ");
-    if (rc == IO_ERR)
-        return rc;
+    while (rc != OK)
+    {
+        while (rc != OK)
+            rc = input_bool(&yn, "Want to try again? ");
+        if (yn == true)
+            rc = input_bool(&new.is_new, "Is the flat new? ");
+        if (yn == false)
+            return IO_ERR;
+    }
     if (new.is_new)
     {
         rc = input_bool(&new.type.newflat.finished, "Is it repaired? ");
-        if (rc == IO_ERR)
-            return rc;
+        while (rc != OK)
+        {
+            while (rc != OK)
+                rc = input_bool(&yn, "Want to try again? ");
+            if (yn == true)
+                rc = input_bool(&new.type.newflat.finished, "Is it repaired? ");
+            if (yn == false)
+                return IO_ERR;
+        }
     }
     else
     {
@@ -42,8 +57,15 @@ int add_line(ft*flats, int length)
         if (rc != OK)
             return rc;
         rc = input_bool(&new.type.oldflat.animal, "Were there any animals? ");
-        if (rc == IO_ERR)
-            return rc;
+        while (rc != OK)
+        {
+            while (rc != OK)
+                rc = input_bool(&yn, "Want to try again? ");
+            if (yn == true)
+                rc = input_bool(&new.type.oldflat.animal, "Were there any animals? ");
+            if (yn == false)
+                return IO_ERR;
+        }
     }
     printf("%hu %s %.3f %hu %d ", new.id, new.adress, new.size, new.rooms, new.price);
     if (new.is_new == true)
@@ -62,7 +84,6 @@ int add_line(ft*flats, int length)
         else
             printf("without animals");
     }
-    bool yn;
     rc = IO_ERR;
     while (rc != OK)
         rc = input_bool(&yn, "\nIs this element correct? Do you want to add it? ");
@@ -76,8 +97,6 @@ int add_line(ft*flats, int length)
         printf("The line isn't added.\n");
         rc = IO_ERR;
     }
-
-
     return rc;
 }
 ft** create(int* length)

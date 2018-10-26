@@ -32,7 +32,6 @@ int main(void)
     {
         menu();
         int action = input_action();
-        printf("action - %d\n", action);
         if (action == ACTION_1)//print
         {
             if (print_table(flats, length) == IO_ERR)
@@ -42,7 +41,7 @@ int main(void)
         {
             if (flats != NULL)
             {
-                printf("OPENING TABLE\n");
+                printf("OPENING THE TABLE\n");
                 printf("Your existing table can be deleted.\nMake sure you have saved it.\n");
                 bool yn;
                 int code = 1;
@@ -52,33 +51,27 @@ int main(void)
                     if (yn == true)
                     {
                         char file[20];
-                        if (input_string(file, 20, "Input name of the file with table: ") == IO_ERR)
+                        if (input_string(file, 20, "Input name of the file (where to save): ") == IO_ERR)
                             printf("Invalid file name, can not save the table.\n");
                         else
-                        {
-                            printf("your file is - %s\n", file);
                             if (save_table(file, flats, length) == OK)
-                                printf("Saved.\n");
-                        }
+                                printf("Saved in %s.\n", file);
                     }
                 }
             }
-            printf("OPENING TABLE\n");
+            printf("OPENING THE TABLE\n");
             char file[20];
-            if (input_string(file, 20, "Input name of the file with table: ") == IO_ERR)
+            if (input_string(file, 20, "Input name of the file (with the table): ") == IO_ERR)
                 printf("Invalid file name, can not open the table.\n");
             else
-            {
-                printf("your file is - %s\n", file);
                 if (read_table(file, &flats, &length) == OK)
                     printf("Opened, you can proceed to work.\n");
-            }
         }
         else if (action == ACTION_3)//create
         {
-            printf("CREATING THE TABLE\n");
             if (flats != NULL)
             {
+                printf("CREATING a NEW TABLE\n");
                 printf("Your existing table can be deleted.\nMake sure you have saved it.\n");
                 bool yn;
                 int code = 1;
@@ -88,14 +81,11 @@ int main(void)
                     if (yn == true)
                     {
                         char file[20];
-                        if (input_string(file, 20, "Input name of the file with table: ") == IO_ERR)
+                        if (input_string(file, 20, "Input name of the file (where to save): ") == IO_ERR)
                             printf("Invalid file name, can not save the table.\n");
                         else
-                        {
-                            printf("your file is - %s\n", file);
                             if (save_table(file, flats, length) == OK)
-                                printf("Saved.\n");
-                        }
+                                printf("Saved in %s.\n", file);
                     }
                 }
             }
@@ -108,74 +98,89 @@ int main(void)
         else if (action == ACTION_4)//add an el
         {
             printf("ADDING A LINE\n");
+            ft *data = (flats == NULL)? NULL: *flats;
             ft** tmp = realloc(flats, (length + 1) * sizeof(ft*));
             if (tmp)
             {
-                ft* data = NULL;
-                data = malloc((length + 1) * sizeof(ft));
-                if (data)
+                ft *tmp_data = realloc(data, (length + 1) * sizeof(ft));
+                if (tmp_data)
                 {
-                    flats = tmp;
-                    flats[length] = &data[length];
-                    if (add_line(data, length) == OK)
+                    if (add_line(tmp_data, length) == OK)
                     {
-                        printf("Added\n");
                         length ++;
+                        flats = tmp;
+                        for (int i = 0; i < length; i++)
+                            flats[i] = &tmp_data[i];
                     }
                     else
                     {
                         printf("can not add a line\n");
-                        ft** tmp = realloc(flats, length * sizeof(ft*));
-                        if (tmp)
-                        {
-                            ft* tmp2 = malloc(length * sizeof(ft));
-                            if (tmp2)
-                            {
-                                data = tmp2;
-                                flats = tmp;
-                            }
-                        }
+                        free(tmp);
+                        free(tmp_data);
                     }
                 }
                 else
-                    printf("Can not add a line\n");
+                    printf("can not add a line.\n");
             }
-            else printf("Can not add a line\n");
+            else
+                printf("can not add a line.\n");
         }
         else if (action == ACTION_5)//delete
         {
             printf("DELETING AN ELEMENT\n");
             if (delete(flats, &length) == OK)
             {
-                printf("here\n");
-                ft **tmp1 = realloc(flats, length * sizeof(ft*));
                 ft *tmp2 = realloc(flats[0], length * sizeof(ft));
-                if (tmp1 && tmp2)
+                if (tmp2)
                 {
-                    printf("reallocating\n");
-                    flats = tmp1;
-                    for (int i = 0; i < length; i ++)
-                        flats[i] = &tmp2[i];
+                    ft **tmp1 = realloc(flats, length * sizeof(ft*));
+                    if (tmp1)
+                    {
+                        flats = tmp1;
+                        for (int i = 0; i < length; i ++)
+                            flats[i] = &tmp2[i];
+                        print_line(*flats[length]);
+                        print_table(flats, length);
+                    }
                 }
-                print_line(*flats[length]);
-                print_table(flats, length);
             }
         }
         else if (action == ACTION_6)//search
         {
             printf("FILTER\n");
+            //поиск всего вторичного 2-х комнатного жилья в указанном ценовом диапазоне без животных.
+            printf("2 rooms flat without animals in the specified price range\n");
             if (search(flats, length) == IO_ERR)
                 printf("Can not find such elements.\n");
         }
         else if (action == ACTION_7)//sort with keys
         {
             printf("SORTING WITH KEYS\n");
-            sort(flats, length);
+            k_el **table = sort(flats, length);
+            if (table)
+            {
+                print_keys(table, length);
+                print_head();
+                for (int i = 0; i < length; i ++)
+                {
+                    printf("%3d", i);
+                    int struct_index = table[i]->index;
+                    print_line(*flats[struct_index]);
+                }
+                free(table[length]);
+                free(table);
+            }
         }
         else if (action == ACTION_8)//sort without keys
         {
             printf("SORTING WITHOUT KEYS\n");
-            sort_flats(flats, length);
+            ft **sorted = sort_flats(flats, length);
+            if (sorted)
+            {
+                print_table(sorted, length);
+                free(sorted[length]);
+                free(sorted);
+            }
         }
         else if (action == 9)
         {
@@ -183,42 +188,59 @@ int main(void)
                 printf("open or create a table first\n");
             else
             {
-            printf("\t....\nCALCULATING EFFICIENCY\n");
-            unsigned long t1, t2;
-            t1 =  tick();
-            sort(flats, length);
-            t2 = tick();
-            unsigned long t_sort1 = t2 - t1;
-            t1 =  tick();
-            sort_shaker(flats, length);
-            t2 = tick();
-            unsigned long t_sort2 = t2 - t1;
-            t1 =  tick();
-            sort_flats(flats, length);
-            t2 = tick();
-            unsigned long t_sort3 = t2 - t1;
-            t1 =  tick();
-            sort_flats_shaker(flats, length);
-            t2 = tick();
-            unsigned long t_sort4 = t2 - t1;
-            printf("Bubble sort keys = %lu\n", t_sort1);
-            printf("Shaker sort keys = %lu\n", t_sort2);
-            printf("Bubble sort the table (pointers) = %lu\n", t_sort3);
-            printf("Shaker sort the table (pointers) = %lu\n", t_sort4);
+                printf("\t....\nCALCULATING EFFICIENCY\n");
+                unsigned long t1, t2;
+                t1 =  tick();
+                k_el **table1 = sort(flats, length);
+                t2 = tick();
+                if (table1)
+                {
+                    free(table1[length]);
+                    free(table1);
+                }
+                unsigned long t_sort1 = t2 - t1;
+                t1 =  tick();
+                k_el **table2 = sort_shaker(flats, length);
+                t2 = tick();
+                if (table2)
+                {
+                    free(table2[length]);
+                    free(table2);
+                }
+                unsigned long t_sort2 = t2 - t1;
+                t1 =  tick();
+                ft **sorted1 = sort_flats(flats, length);
+                t2 = tick();
+                if(sorted1)
+                {
+                    free(sorted1[length]);
+                    free(sorted1);
+                }
+                unsigned long t_sort3 = t2 - t1;
+                t1 =  tick();
+                ft **sorted2 = sort_flats_shaker(flats, length);
+                t2 = tick();
+                if(sorted2)
+                {
+                    free(sorted2[length]);
+                    free(sorted2);
+                }
+                unsigned long t_sort4 = t2 - t1;
+                printf("Bubble sort keys = %lu\n", t_sort1);
+                printf("Shaker sort keys = %lu\n", t_sort2);
+                printf("Bubble sort the table (pointers) = %lu\n", t_sort3);
+                printf("Shaker sort the table (pointers) = %lu\n", t_sort4);
             }
         }
         else if (action == ACTION_10)//save
         {
             printf("SAVING THE TABLE\n");
             char file[20];
-            if (input_string(file, 20, "Input name of the file with table: ") == IO_ERR)
+            if (input_string(file, 20, "Input name of the file (where to save): ") == IO_ERR)
                 printf("Invalid file name, can not open the table.\n");
             else
-            {
-                printf("your file is - %s\n", file);
                 if (save_table(file, flats, length) == OK)
-                    printf("Saved.\n");
-            }
+                    printf("Saved in %s.\n", file);
         }
         else if (action == 11)
         {
@@ -227,29 +249,7 @@ int main(void)
         }
         else if (action == 12)
         {
-            printf("exit\n");
-            if (flats != NULL)
-            {
-                printf("Your existing table can be deleted.\nMake sure you have saved it.\n");
-                bool yn;
-                int code = 1;
-                while (code != OK)
-                {
-                    code = input_bool(&yn, "Do you want to save it now? ");
-                    if (yn == true)
-                    {
-                        char file[20];
-                        if (input_string(file, 20, "Input name of the file with table: ") == IO_ERR)
-                            printf("Invalid file name, can not save the table.\n");
-                        else
-                        {
-                            printf("your file is - %s\n", file);
-                            if (save_table(file, flats, length) == OK)
-                                printf("Saved.\n");
-                        }
-                    }
-                }
-            }
+            printf("EXIT\n");
         }
         else
             printf("Invalid input\n");

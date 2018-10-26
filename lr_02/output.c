@@ -50,7 +50,7 @@ void print_head(void)
 }
 int print_table(struct flat_t**flats, int length)
 {
-    if(flats == NULL || *flats == NULL || length == 0)
+    if(flats == NULL || *flats == NULL || length <= 0)
         return IO_ERR;
     print_head();
     for (int i = 0; i < length; i ++)

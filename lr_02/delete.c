@@ -48,6 +48,12 @@ int search(ft **flats, int length)//sorting price with keys
         return IO_ERR;
     if (input_int(&rp, "Input the highest price: ") == IO_ERR)
         return IO_ERR;
+    int count = 0;
+    for (int i = 0; i < length; i ++)
+        if (flats[i]->price > lp && flats[i]->price < rp)
+            count ++;
+    if (count == 0)
+        return IO_ERR;
     print_head();
     for (int i = 0; i < length; i ++)
     {

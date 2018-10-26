@@ -5,6 +5,7 @@
 
 int save_table(char* filename, ft**flats, int length)
 {
+    print_table(flats, length);
     if (length == 0 || flats == NULL)
     {
         printf("Can not save an empty database\n");
