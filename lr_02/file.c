@@ -41,7 +41,7 @@ int read_table(char* filename, ft***flats, int *length)
     f = fopen(filename, "rb");
     if (f)
     {
-        ft** tmp_ptr = NULL;
+        ft **tmp_ptr = NULL;
         ft * tmp_data = NULL;
         int rlen = 0;
         int mlen = 0;
@@ -51,14 +51,21 @@ int read_table(char* filename, ft***flats, int *length)
             if (rlen == mlen)
             {
                 mlen += CHUNK;
-                ft** tmp = realloc(tmp_ptr, mlen * sizeof(ft*));
-                if (tmp)
+                ft** tmp1 = realloc(tmp_ptr, mlen * sizeof(ft*));
+                if (tmp1)
                 {
-                    tmp_ptr = tmp;
-                    ft* tmp = realloc(tmp_data, mlen * sizeof(ft));
-                    if (tmp)
-                        tmp_data = tmp;
+                    tmp_ptr = tmp1;
+                    ft* tmp2 = realloc(tmp_data, mlen * sizeof(ft));
+                    if (tmp2)
+                        tmp_data = tmp2;
+                    else
+                    {
+                        printf("mem_err\n");
+                        free(tmp1);
+                    }
                 }
+                else
+                    printf("mem_err\n");
             }
             code = (int)fread(tmp_data + rlen, sizeof(ft), 1, f);
             tmp_ptr[rlen] = tmp_data + rlen;
@@ -74,7 +81,14 @@ int read_table(char* filename, ft***flats, int *length)
                 tmp_ptr = tmp1;
                 tmp_data = tmp2;
             }
+            else
+            {
+                printf("mem_er\n");
+                free(tmp1);
+            }
         }
+        else
+            printf("mem_er\n");
         *flats = tmp_ptr;
         *length = rlen;
         fclose(f);

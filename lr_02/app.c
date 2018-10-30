@@ -27,6 +27,7 @@ int main(void)
     ft**flats = NULL;
     int length = 0;
     bool yn = true;
+    int saved_flag = 0;
     int rc;
     while (yn)
     {
@@ -39,7 +40,7 @@ int main(void)
         }
         else if (action == ACTION_2)//open
         {
-            if (flats != NULL)
+            if (flats != NULL && saved_flag == 0)
             {
                 printf("OPENING THE TABLE\n");
                 printf("Your existing table can be deleted.\nMake sure you have saved it.\n");
@@ -55,7 +56,10 @@ int main(void)
                             printf("Invalid file name, can not save the table.\n");
                         else
                             if (save_table(file, flats, length) == OK)
+                            {
+                                saved_flag = 1;
                                 printf("Saved in %s.\n", file);
+                            }
                     }
                 }
             }
@@ -69,7 +73,7 @@ int main(void)
         }
         else if (action == ACTION_3)//create
         {
-            if (flats != NULL)
+            if (flats != NULL && saved_flag == 0)
             {
                 printf("CREATING a NEW TABLE\n");
                 printf("Your existing table can be deleted.\nMake sure you have saved it.\n");
@@ -85,7 +89,10 @@ int main(void)
                             printf("Invalid file name, can not save the table.\n");
                         else
                             if (save_table(file, flats, length) == OK)
+                            {
+                                saved_flag = 1;
                                 printf("Saved in %s.\n", file);
+                            }
                     }
                 }
             }
@@ -93,20 +100,27 @@ int main(void)
             if (flats == NULL)
                 printf("Can not create a table.\n");
             else
+            {
                 printf("The database is created.\n");
+                saved_flag = 0;
+            }
         }
         else if (action == ACTION_4)//add an el
         {
             printf("ADDING A LINE\n");
             ft *data = (flats == NULL)? NULL: *flats;
+            printf("data\n");
             ft** tmp = realloc(flats, (length + 1) * sizeof(ft*));
+            printf("tmp\n");
             if (tmp)
             {
                 ft *tmp_data = realloc(data, (length + 1) * sizeof(ft));
+                printf("tmp_data\n");
                 if (tmp_data)
                 {
                     if (add_line(tmp_data, length) == OK)
                     {
+                        saved_flag = 0;
                         length ++;
                         flats = tmp;
                         for (int i = 0; i < length; i++)
@@ -114,22 +128,23 @@ int main(void)
                     }
                     else
                     {
-                        printf("can not add a line\n");
+                        printf("1 can not add a line\n");
                         free(tmp);
                         free(tmp_data);
                     }
                 }
                 else
-                    printf("can not add a line.\n");
+                    printf("2 can not add a line.\n");
             }
             else
-                printf("can not add a line.\n");
+                printf("3 can not add a line.\n");
         }
         else if (action == ACTION_5)//delete
         {
             printf("DELETING AN ELEMENT\n");
             if (delete(flats, &length) == OK)
             {
+                saved_flag = 0;
                 ft *tmp2 = realloc(flats[0], length * sizeof(ft));
                 if (tmp2)
                 {
@@ -240,7 +255,10 @@ int main(void)
                 printf("Invalid file name, can not open the table.\n");
             else
                 if (save_table(file, flats, length) == OK)
+                {
+                    saved_flag = 1;
                     printf("Saved in %s.\n", file);
+                }
         }
         else if (action == 11)
         {
@@ -257,7 +275,7 @@ int main(void)
         while (rc != OK)
             rc = input_bool(&yn, "Do you want to continue work? ");
     }
-    if (flats != NULL)
+    if (flats != NULL && saved_flag == 0)
     {
         printf("Your existing table can be deleted.\nMake sure you have saved it.\n");
         bool yn;
