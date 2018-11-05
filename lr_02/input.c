@@ -1,6 +1,10 @@
 #include "derectives.h"
 #include "input.h"
 
+/**
+ * @brief clean_stdin
+ * очищает поток ввода
+ */
 void clean_stdin(void)
 {
     //printf("clearing! ");
@@ -13,6 +17,16 @@ void clean_stdin(void)
     //printf("\n");
 }
 
+/**
+ * @brief input_bool обрабатывает ввод логического значения
+ * @param value логическая переменная, в которую сохранится ввод
+ * @param key строка-выражение, пояснение к вводу
+ * @return код ошибки
+ * выводит на экран переданное сообщение, получает ввод
+ * если строка равна "y" логическая переменная равно true
+ * если строка равна "n" логическая переменная принимает значение false
+ * иначе программа очищает поток ввода и возвращает код ошибки ввода
+ */
 int input_bool(bool *value, char *key)
 {
     printf("%s ", key);
@@ -46,6 +60,10 @@ int input_bool(bool *value, char *key)
     return rc;
 }
 
+/**
+ * @brief input_action Обрабатывает ввод пункта меню
+ * @return код операции
+ */
 int input_action(void)
 {
     int act;
@@ -54,7 +72,7 @@ int input_action(void)
     c = getchar();
     if (c != EOF && c != '\n')
     {
-        if (isdigit(c))
+        if (isdigit(c) && c != '0')
         {
             c2 = getchar();
             if (c == '1')
@@ -71,7 +89,8 @@ int input_action(void)
                     else if (c2 == '2' && c3 == '\n')
                         act = ACTION_12;
                     else
-                        act = IO_ERR;
+                        if (c3 != '\n')
+                            act = IO_ERR;
                 }
             }
             else if (c == '2' && c2 == '\n')
@@ -103,23 +122,33 @@ int input_action(void)
     return act;
 }
 
+/**
+ * @brief input_string ввод строки
+ * @param str строка, полученная в результате чтения
+ * @param n длина строки
+ * @param key выражение, пояснение к вводу
+ * @return код ошибки
+ * считывание посимвольно до конца ввода, увеличивается переменная индекса,
+ * если индекс в результате равен нулю или больше длины - сообщаем пользователю,
+ * что ввод пустой или превышает допустимое количество символов.
+ * Спрашиваем у пользователя хочет ли он попробовать еще, до тех пор пока он не ответить да или нет
+ * если да - вызываем функцию ввода еще раз
+ * если нет - возвращаем код ошибки ввода
+ */
 int input_string(char *str, int n, char *key)
 {
-    //printf("Adress (<50 symbols): ");
     printf("%s", key);
     char c;
     int rc = OK;
-    int i = 0, flag = 0;
+    int i = 0;
     bool yn;
     while ((c = getchar()) != '\n' && c != EOF)
     {
         if (i < n - 1)
             str[i++] = c;
-        else
-            flag = 1;
     }
     str[i] = '\0';
-    if (flag == 1 || i == 0)
+    if (i > n || i == 0)
     {
         printf("Empty input or reached the maximum size of holder\n");
         rc = IO_ERR;
@@ -133,6 +162,12 @@ int input_string(char *str, int n, char *key)
     return rc;
 }
 
+/**
+ * @brief input_float ввод вещественного числа
+ * @param size
+ * @param key
+ * @return
+ */
 int input_float(float *size, char *key)
 {
     printf("%s", key);

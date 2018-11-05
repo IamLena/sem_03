@@ -24,44 +24,51 @@ void menu(void)
 }
 int main(void)
 {
-    ft**flats = NULL;
+    ft *flats = NULL;
     int length = 0;
     bool yn = true;
     int saved_flag = 0;
     int rc;
+
     while (yn)
     {
         menu();
         int action = input_action();
         if (action == ACTION_1)//print
         {
+            printf("PRINTING THE TABLE\n");
             if (print_table(flats, length) == IO_ERR)
                 printf("There is no data.\n");
         }
         else if (action == ACTION_2)//open
         {
-            if (flats != NULL && saved_flag == 0)
+            if (flats != NULL)
             {
-                printf("OPENING THE TABLE\n");
-                printf("Your existing table can be deleted.\nMake sure you have saved it.\n");
-                bool yn;
-                int code = 1;
-                while (code != OK)
+                if (saved_flag == 0)
                 {
-                    code = input_bool(&yn, "Do you want to save it now? ");
-                    if (yn == true)
+                    printf("OPENING THE TABLE\n");
+                    printf("Your existing table can be deleted.\nMake sure you have saved it.\n");
+                    bool yn;
+                    int code = 1;
+                    while (code != OK)
                     {
-                        char file[20];
-                        if (input_string(file, 20, "Input name of the file (where to save): ") == IO_ERR)
-                            printf("Invalid file name, can not save the table.\n");
-                        else
-                            if (save_table(file, flats, length) == OK)
-                            {
-                                saved_flag = 1;
-                                printf("Saved in %s.\n", file);
-                            }
+                        code = input_bool(&yn, "Do you want to save it now? ");
+                        if (yn == true)
+                        {
+                            char file[20];
+                            if (input_string(file, 20, "Input name of the file (where to save): ") == IO_ERR)
+                                printf("Invalid file name, can not save the table.\n");
+                            else
+                                if (save_table(file, flats, length) == OK)
+                                {
+                                    saved_flag = 1;
+                                    printf("Saved in %s.\n", file);
+                                }
+                        }
                     }
                 }
+                else
+                    printf("Be aware you have a opened saved table\n");
             }
             printf("OPENING THE TABLE\n");
             char file[20];
@@ -69,33 +76,42 @@ int main(void)
                 printf("Invalid file name, can not open the table.\n");
             else
                 if (read_table(file, &flats, &length) == OK)
+                {
                     printf("Opened, you can proceed to work.\n");
+                    saved_flag = 1;
+                }
         }
         else if (action == ACTION_3)//create
         {
-            if (flats != NULL && saved_flag == 0)
+            if (flats != NULL)
             {
-                printf("CREATING a NEW TABLE\n");
-                printf("Your existing table can be deleted.\nMake sure you have saved it.\n");
-                bool yn;
-                int code = 1;
-                while (code != OK)
+                printf("CREATING A NEW TABLE\n");
+                if (saved_flag == 0)
                 {
-                    code = input_bool(&yn, "Do you want to save it now? ");
-                    if (yn == true)
+                    printf("Your existing table can be deleted.\nMake sure you have saved it.\n");
+                    bool yn;
+                    int code = 1;
+                    while (code != OK)
                     {
-                        char file[20];
-                        if (input_string(file, 20, "Input name of the file (where to save): ") == IO_ERR)
-                            printf("Invalid file name, can not save the table.\n");
-                        else
-                            if (save_table(file, flats, length) == OK)
-                            {
-                                saved_flag = 1;
-                                printf("Saved in %s.\n", file);
-                            }
+                        code = input_bool(&yn, "Do you want to save it now? ");
+                        if (yn == true)
+                        {
+                            char file[20];
+                            if (input_string(file, 20, "Input name of the file (where to save): ") == IO_ERR)
+                                printf("Invalid file name, can not save the table.\n");
+                            else
+                                if (save_table(file, flats, length) == OK)
+                                {
+                                    saved_flag = 1;
+                                    printf("Saved in %s.\n", file);
+                                }
+                        }
                     }
                 }
+                else
+                    printf("Be aware you have a opened saved table\n");
             }
+            printf("CREATING A NEW TABLE\n");
             flats = create(&length);
             if (flats == NULL)
                 printf("Can not create a table.\n");
@@ -107,34 +123,21 @@ int main(void)
         }
         else if (action == ACTION_4)//add an el
         {
-            printf("ADDING A LINE\n");
-            ft *data = (flats == NULL)? NULL: *flats;
-            printf("data\n");
-            ft** tmp = realloc(flats, (length + 1) * sizeof(ft*));
-            printf("tmp\n");
+            printf("ADDING AN ELEMENT\n");
+            ft *tmp = realloc(flats, (length + 1) * sizeof(ft*));
             if (tmp)
             {
-                ft *tmp_data = realloc(data, (length + 1) * sizeof(ft));
-                printf("tmp_data\n");
-                if (tmp_data)
+                if (add_line(tmp, length) == OK)
                 {
-                    if (add_line(tmp_data, length) == OK)
-                    {
-                        saved_flag = 0;
-                        length ++;
-                        flats = tmp;
-                        for (int i = 0; i < length; i++)
-                            flats[i] = &tmp_data[i];
-                    }
-                    else
-                    {
-                        printf("1 can not add a line\n");
-                        free(tmp);
-                        free(tmp_data);
-                    }
+                    saved_flag = 0;
+                    length ++;
+                    flats = tmp;
                 }
                 else
-                    printf("2 can not add a line.\n");
+                {
+                    printf("1 can not add a line\n");
+                    free(tmp);
+                }
             }
             else
                 printf("3 can not add a line.\n");
@@ -142,23 +145,7 @@ int main(void)
         else if (action == ACTION_5)//delete
         {
             printf("DELETING AN ELEMENT\n");
-            if (delete(flats, &length) == OK)
-            {
-                saved_flag = 0;
-                ft *tmp2 = realloc(flats[0], length * sizeof(ft));
-                if (tmp2)
-                {
-                    ft **tmp1 = realloc(flats, length * sizeof(ft*));
-                    if (tmp1)
-                    {
-                        flats = tmp1;
-                        for (int i = 0; i < length; i ++)
-                            flats[i] = &tmp2[i];
-                        print_line(*flats[length]);
-                        print_table(flats, length);
-                    }
-                }
-            }
+            delete(&flats, &length);
         }
         else if (action == ACTION_6)//search
         {
@@ -171,7 +158,7 @@ int main(void)
         else if (action == ACTION_7)//sort with keys
         {
             printf("SORTING WITH KEYS\n");
-            k_el **table = sort(flats, length);
+            k_el *table = sort_keys(flats, length);
             if (table)
             {
                 print_keys(table, length);
@@ -179,26 +166,25 @@ int main(void)
                 for (int i = 0; i < length; i ++)
                 {
                     printf("%3d", i);
-                    int struct_index = table[i]->index;
-                    print_line(*flats[struct_index]);
+                    int struct_index = table[i].index;
+                    print_line(flats[struct_index]);
                 }
-                free(table[length]);
                 free(table);
             }
         }
         else if (action == ACTION_8)//sort without keys
         {
             printf("SORTING WITHOUT KEYS\n");
-            ft **sorted = sort_flats(flats, length);
+            ft *sorted = sort_flats(flats, length);
             if (sorted)
             {
                 print_table(sorted, length);
-                free(sorted[length]);
                 free(sorted);
             }
         }
         else if (action == 9)
         {
+            printf("INFO ABOUT EFFICIENCY\n");
             if (flats == NULL)
                 printf("open or create a table first\n");
             else
@@ -206,38 +192,34 @@ int main(void)
                 printf("\t....\nCALCULATING EFFICIENCY\n");
                 unsigned long t1, t2;
                 t1 =  tick();
-                k_el **table1 = sort(flats, length);
+                k_el *table1 = sort_keys(flats, length);
                 t2 = tick();
                 if (table1)
                 {
-                    free(table1[length]);
                     free(table1);
                 }
                 unsigned long t_sort1 = t2 - t1;
                 t1 =  tick();
-                k_el **table2 = sort_shaker(flats, length);
+                k_el *table2 = sort_keys_shaker(flats, length);
                 t2 = tick();
                 if (table2)
                 {
-                    free(table2[length]);
                     free(table2);
                 }
                 unsigned long t_sort2 = t2 - t1;
                 t1 =  tick();
-                ft **sorted1 = sort_flats(flats, length);
+                ft *sorted1 = sort_flats(flats, length);
                 t2 = tick();
                 if(sorted1)
                 {
-                    free(sorted1[length]);
                     free(sorted1);
                 }
                 unsigned long t_sort3 = t2 - t1;
                 t1 =  tick();
-                ft **sorted2 = sort_flats_shaker(flats, length);
+                ft *sorted2 = sort_flats_shaker(flats, length);
                 t2 = tick();
                 if(sorted2)
                 {
-                    free(sorted2[length]);
                     free(sorted2);
                 }
                 unsigned long t_sort4 = t2 - t1;
@@ -262,8 +244,8 @@ int main(void)
         }
         else if (action == 11)
         {
-            printf("INFO\n");
-            printf("IU7-31b\nLuchina Lena\nlab_02\n");
+            printf("MADE BY\n");
+            printf("Luchina Lena IU7-31b\nlab_02\n");
         }
         else if (action == 12)
         {
@@ -296,9 +278,8 @@ int main(void)
                 }
             }
         }
-        if (flats[0] != NULL)
-            free (flats[0]);
         free(flats);
     }
+    printf("exiting the program");
     return OK;
 }

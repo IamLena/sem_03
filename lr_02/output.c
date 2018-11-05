@@ -48,15 +48,16 @@ void print_head(void)
     printf("------------------");
     printf("\n");
 }
-int print_table(struct flat_t**flats, int length)
+
+int print_table(struct flat_t*flats, int length)
 {
-    if(flats == NULL || *flats == NULL || length <= 0)
+    if(flats == NULL || length <= 0)
         return IO_ERR;
     print_head();
     for (int i = 0; i < length; i ++)
     {
         printf("%3d", i + 1);
-        print_line(*flats[i]);
+        print_line(flats[i]);
     }
     printf("------------------------------");
     printf("------------------------------");
@@ -64,4 +65,15 @@ int print_table(struct flat_t**flats, int length)
     printf("------------------------------");
     printf("------------------\n");
     return OK;
+}
+
+void print_keys (k_el *table, int length)
+{
+    printf("---------------------------\n");
+    printf("| # | index|    price     |\n");
+    printf("---------------------------\n");
+    for (int i = 0; i < length; i ++)
+    {
+        printf("|%3d|%6d|%14d|\n", i+1, table[i].index, table[i].price);
+    }
 }

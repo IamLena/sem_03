@@ -9,7 +9,7 @@
 #include<math.h>
 
 #define ADRESS_LEN 50
-#define CHUNK 5
+#define CHUNK 10
 
 #define NEW 111
 #define OLD 222
@@ -17,6 +17,8 @@
 #define OK 101
 #define IO_ERR 202
 #define DEL_ERR 303
+#define MEM_ERR 404
+#define EMPTY_ERR 505
 
 #define ACTION_1 1
 #define ACTION_2 2

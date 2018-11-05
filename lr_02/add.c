@@ -2,14 +2,19 @@
 #include "input.h"
 #include "add.h"
 
-int add_line(ft*flats, int length)
+int add_line(ft *flats, int length)
 {
+    if (length < 0)
+        return IO_ERR;
     int rc;
     bool yn;
     printf("adding line\n");
-    struct flat_t new;
+    ft new;
 
-    new.id = length;
+    if (length > 0)
+        new.id = flats[length - 1].id + 1;
+    else
+        new.id = 0;
     rc = input_string(new.adress, ADRESS_LEN, "Adress (<50 symbols): ");
     if (rc != OK)
         return IO_ERR;
@@ -99,27 +104,18 @@ int add_line(ft*flats, int length)
     }
     return rc;
 }
-ft** create(int* length)
+
+ft *create(int *length)
 {
     int rc;
-    printf("CREATING A NEW TABLE\n");
-    ft **flats = NULL;
+    ft *flats = NULL;
     int real_length = 0;
     int memory_length = CHUNK;
-    flats = malloc(memory_length * sizeof(ft*));
+    flats = malloc(memory_length * sizeof(ft));
     if (!flats)
         printf("Memory error occured.\nCan not create a new database.");
     else
     {
-        ft *data = NULL;
-        data = malloc(CHUNK * sizeof(ft));
-        if (!data)
-        {
-            free(flats);
-            printf("Memory error occured.\nCan not create a new database.\n");
-        }
-        else
-        {
             bool yn = true;
             while (yn)
             {
@@ -128,50 +124,25 @@ ft** create(int* length)
                     rc = input_bool(&yn, "Do you want to add an element? ");
                 if (yn == true)
                 {
-                    flats[real_length] = &data[real_length];
-                    if (add_line(data, real_length) == OK)
-                    {
-                        real_length ++;
-                    }
+                    if (add_line(flats, real_length) == OK)
+                        real_length++;
                     if (real_length == memory_length)
                     {
                         memory_length += CHUNK;
-                        ft** tmp1 = realloc(flats, memory_length * sizeof(ft*));
-                        if (!tmp1)
-                            printf("Memory error occured.\nCan not add any more elements\n.");
-                        else
-                        {
-                            ft* tmp2 = realloc(data, memory_length * sizeof(ft));
+                            ft* tmp2 = realloc(flats, memory_length * sizeof(ft));
                             if (!tmp2)
-                            {
-                                free(tmp1);
                                 printf("Memory error occured.\nCan not add any more elements\n.");
-                            }
                             else
-                            {
-                                flats = tmp1;
-                                data = tmp2;
-                            }
-                        }
+                                flats = tmp2;
                     }
                 }
                 else
                 {
-                    ft **tmp1 = realloc(flats, real_length * sizeof(ft*));
-                    if (tmp1)
-                    {
-                        ft* tmp2 = realloc(data, real_length * sizeof(ft));
-                        if (!tmp2)
-                            free(tmp1);
-                        else
-                        {
-                            flats = tmp1;
-                            data = tmp2;
-                        }
-                    }
+                        ft* tmp2 = realloc(flats, real_length * sizeof(ft));
+                        if (tmp2)
+                            flats = tmp2;
                 }
             }
-        }
     }
     *length = real_length;
     return flats;
