@@ -24,6 +24,11 @@ void menu(void)
 }
 int main(void)
 {
+
+    printf("size of flat - %d\n", (int)sizeof(ft));
+    printf("size of k_el - %d\n", (int)sizeof(k_el));
+    printf("size of float - %d\n", (int)sizeof(float));
+    printf("size of double - %d\n", (int)sizeof(double));
     ft *flats = NULL;
     int length = 0;
     bool yn = true;
@@ -124,7 +129,8 @@ int main(void)
         else if (action == ACTION_4)//add an el
         {
             printf("ADDING AN ELEMENT\n");
-            ft *tmp = realloc(flats, (length + 1) * sizeof(ft*));
+            ft *tmp = realloc(flats, (length + 1) * sizeof(ft));
+            printf("real");
             if (tmp)
             {
                 if (add_line(tmp, length) == OK)
@@ -158,14 +164,15 @@ int main(void)
         else if (action == ACTION_7)//sort with keys
         {
             printf("SORTING WITH KEYS\n");
-            k_el *table = sort_keys(flats, length);
+            unsigned long t;
+            k_el *table = sort_keys(flats, length, &t);
             if (table)
             {
                 print_keys(table, length);
                 print_head();
                 for (int i = 0; i < length; i ++)
                 {
-                    printf("%3d", i);
+                    printf("%3d", i + 1);
                     int struct_index = table[i].index;
                     print_line(flats[struct_index]);
                 }
@@ -174,8 +181,9 @@ int main(void)
         }
         else if (action == ACTION_8)//sort without keys
         {
+            unsigned long t;
             printf("SORTING WITHOUT KEYS\n");
-            ft *sorted = sort_flats(flats, length);
+            ft *sorted = sort_flats(flats, length, &t);
             if (sorted)
             {
                 print_table(sorted, length);
@@ -190,43 +198,76 @@ int main(void)
             else
             {
                 printf("\t....\nCALCULATING EFFICIENCY\n");
-                unsigned long t1, t2;
-                t1 =  tick();
-                k_el *table1 = sort_keys(flats, length);
-                t2 = tick();
-                if (table1)
+                printf("bubble sort with keys\n");
+                unsigned long time[7];
+                unsigned long t1, t2, t;
+                k_el *table1;
+                ft *table2;
+                for (int i = 0; i < 10; i++)
                 {
-                    free(table1);
+                    t1 =  tick();
+                    table1 = sort_keys(flats, length, &t);
+                    t2 = tick();
+                    if (table1)
+                    {
+                        free(table1);
+                    }
+                    time[i] = t2 - t1 - t;
+//                    unsigned long t_sort1 = t2 - t1 - t;
+//                    printf("%lu %lu %lu %lu\n", t2, t1, t2 - t1, t);
                 }
-                unsigned long t_sort1 = t2 - t1;
-                t1 =  tick();
-                k_el *table2 = sort_keys_shaker(flats, length);
-                t2 = tick();
-                if (table2)
+                unsigned long t_sort1 = average(time, 10);
+
+                for (int i = 0; i < 10; i++)
                 {
-                    free(table2);
+                    t1 =  tick();
+                    table2 = sort_flats(flats, length, &t);
+                    t2 = tick();
+                    if (table2)
+                    {
+                        free(table2);
+                    }
+                    time[i] = t2 - t1 - t;
+//                    unsigned long t_sort1 = t2 - t1 - t;
+//                    printf("%lu %lu %lu %lu\n", t2, t1, t2 - t1, t);
                 }
-                unsigned long t_sort2 = t2 - t1;
-                t1 =  tick();
-                ft *sorted1 = sort_flats(flats, length);
-                t2 = tick();
-                if(sorted1)
+                unsigned long t_sort2 = average(time, 10);
+
+                for (int i = 0; i < 10; i++)
                 {
-                    free(sorted1);
+                    t1 =  tick();
+                    table1 = sort_keys_shaker(flats, length, &t);
+                    t2 = tick();
+                    if (table1)
+                    {
+                        free(table1);
+                    }
+                    time[i] = t2 - t1 - t;
+//                    unsigned long t_sort1 = t2 - t1 - t;
+//                    printf("%lu %lu %lu %lu\n", t2, t1, t2 - t1, t);
                 }
-                unsigned long t_sort3 = t2 - t1;
-                t1 =  tick();
-                ft *sorted2 = sort_flats_shaker(flats, length);
-                t2 = tick();
-                if(sorted2)
+                unsigned long t_sort3 = average(time, 10);
+
+                for (int i = 0; i < 10; i++)
                 {
-                    free(sorted2);
+                    t1 =  tick();
+                    table2 = sort_flats_shaker(flats, length, &t);
+                    t2 = tick();
+                    if (table2)
+                    {
+                        free(table2);
+                    }
+                    time[i] = t2 - t1 - t;
+//                    unsigned long t_sort1 = t2 - t1 - t;
+//                    printf("%lu %lu %lu %lu\n", t2, t1, t2 - t1, t);
                 }
-                unsigned long t_sort4 = t2 - t1;
-                printf("Bubble sort keys = %lu\n", t_sort1);
-                printf("Shaker sort keys = %lu\n", t_sort2);
-                printf("Bubble sort the table (pointers) = %lu\n", t_sort3);
-                printf("Shaker sort the table (pointers) = %lu\n", t_sort4);
+                unsigned long t_sort4 = average(time, 10);
+
+                printf("Array        |   Bubble    |   Shaker    |\n");
+                printf("------------------------------------------\n");
+                printf("keys         |%13lu|%13lu|\n", t_sort1, t_sort3);
+                printf("without keys |%13lu|%13lu|\n", t_sort2, t_sort4);
+                printf("------------------------------------------\n");
             }
         }
         else if (action == ACTION_10)//save

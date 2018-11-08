@@ -2,6 +2,20 @@
 #include "output.h"
 #include "sort.h"
 
+unsigned long tick(void)
+{
+    unsigned long long d;
+    __asm__ __volatile__ ("rdtsc" : "=A" (d) );
+    return d;
+}
+
+unsigned long average (unsigned long *t, int length)
+{
+    unsigned long sum = 0;
+    for (int i = 0; i < length; i++)
+        sum += t[i];
+    return (sum / length);
+}
 
 /**
  * @brief make_keys формирование таблицы ключей
@@ -12,9 +26,13 @@
  * если память выделить не получилось возвращаем ошибку, иначе
  * в цикле по элементам таблицы квартир копируем в элемент таблицы ключей значение индекса и цены
  */
-k_el *make_keys(ft *flats, int length)
+k_el *make_keys(ft *flats, int length, unsigned long *t)
 {
+    unsigned long t1, t2;
+    t1 =  tick();
     k_el *table = malloc(length * sizeof(k_el));
+    t2 = tick();
+    *t = t2 - t1;
     if (!table)
         return NULL;
     for (int i = 0; i < length; i ++)
@@ -31,9 +49,13 @@ k_el *make_keys(ft *flats, int length)
  * @param length его длина
  * @return начало массива-копии
  */
-ft *copy_table(ft *flats, int length)
+ft *copy_table(ft *flats, int length, unsigned long *t)
 {
+    unsigned long t1, t2;
+    t1 =  tick();
     ft *data = malloc(length * sizeof(ft));
+    t2 = tick();
+    *t = t2 - t1;
     if (!data)
     {
         printf("can not make a copy of the table\n");
@@ -50,9 +72,9 @@ ft *copy_table(ft *flats, int length)
  * @param length длина таблицы
  * @return начало таблицы ключей
  */
-k_el *sort_keys(ft *flats, int length)//price
+k_el *sort_keys(ft *flats, int length, unsigned long *t)//price
 {
-    k_el *table = make_keys(flats, length);
+    k_el *table = make_keys(flats, length, t);
     if (!table)
         return NULL;
     for (int i = 0; i < length - 1; i ++)
@@ -72,9 +94,9 @@ k_el *sort_keys(ft *flats, int length)//price
  * @param length длина таблицы
  * @return начало таблицы ключей
  */
-ft *sort_flats(ft *flats, int length)
+ft *sort_flats(ft *flats, int length, unsigned long *t)
 {
-    ft *data = copy_table(flats, length);
+    ft *data = copy_table(flats, length, t);
     if (!data)
         return NULL;
     for (int i = 0; i < length - 1; i++)
@@ -90,9 +112,9 @@ ft *sort_flats(ft *flats, int length)
     return data;
 }
 
-k_el *sort_keys_shaker(ft *flats, int length)
+k_el *sort_keys_shaker(ft *flats, int length, unsigned long *t)
 {
-    k_el *table = make_keys(flats, length);
+    k_el *table = make_keys(flats, length, t);
     if (!table)
         return NULL;
     for (int i = 0; i < length - 1; i ++)
@@ -115,9 +137,9 @@ k_el *sort_keys_shaker(ft *flats, int length)
     return table;
 }
 
-ft *sort_flats_shaker(ft *flats, int length)
+ft *sort_flats_shaker(ft *flats, int length, unsigned long *t)
 {
-    ft *data = copy_table(flats, length);
+    ft *data = copy_table(flats, length, t);
     if (!data)
         return NULL;
     for(int i = 0; i < length - 1; i ++)

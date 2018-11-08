@@ -24,7 +24,7 @@ int delete(ft **flats, int *length)
     int index;
     int rc = OK;
     print_table(*flats, *length);
-    input_int(&index, "Input the number of the element you want to delete: ");
+    input_int(&index, 3, "Input the number of the element you want to delete: ");
     printf("the value is %d\n", index);
     if (index <= 0 || index > *length)
     {
@@ -34,11 +34,11 @@ int delete(ft **flats, int *length)
     else
     {
         printf("this line \n");
-        print_line(*flats[index - 1]);
+        print_line((*flats)[index - 1]);
         if (index < *length)
         {
             printf("replace with this\n");
-            print_line(*flats[index]);
+            print_line((*flats)[index]);
             printf("moving %d\n", (int)(*length - index));
             printf("moving %d\n", (int)((*length - index)*sizeof(ft)));
             memmove(*flats + index - 1, *flats + index, (*length - index) * sizeof(ft));
@@ -71,9 +71,9 @@ int search(ft *flats, int length)//sorting price with keys
 //Найти все вторичное 2-х комнатное жилье в указанном ценовом диапазоне без животных
 {
     int lp, rp;
-    if (input_int(&lp, "Input the lowest price: ") == IO_ERR)
+    if (input_int(&lp, 8, "Input the lowest price: ") == IO_ERR)
         return IO_ERR;
-    if (input_int(&rp, "Input the highest price: ") == IO_ERR)
+    if (input_int(&rp, 8, "Input the highest price: ") == IO_ERR)
         return IO_ERR;
     int count = 0;
     for (int i = 0; i < length; i ++)
@@ -89,15 +89,8 @@ int search(ft *flats, int length)//sorting price with keys
     }
     if (count == 0)
     {
-        printf("There are no such elements");
+        printf("There are no such elements\n");
         return EMPTY_ERR;
     }
     return OK;
-}
-
-unsigned long tick(void)
-{
-    unsigned long long d;
-    __asm__ __volatile__ ("rdtsc" : "=A" (d) );
-    return d;
 }

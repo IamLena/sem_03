@@ -2,6 +2,15 @@
 #include "input.h"
 #include "add.h"
 
+/**
+ * @brief add_line добавление элемента
+ * @param flats указатель на начало массива
+ * @param length длина массива
+ * @return код возврата
+ *
+ * если длина меньше нулю, возвращаем код ошибки
+ *
+ */
 int add_line(ft *flats, int length)
 {
     if (length < 0)
@@ -18,13 +27,24 @@ int add_line(ft *flats, int length)
     rc = input_string(new.adress, ADRESS_LEN, "Adress (<50 symbols): ");
     if (rc != OK)
         return IO_ERR;
-    rc = input_float(&new.size, "Size (m^2): ");
+    rc = input_float(&new.size, 10, "Size (m^2) (15; 2000, power < -4): ");
+    while (new.size < 15 || new.size > 2000)
+    {
+        rc = IO_ERR;
+        printf("Invalid range\n");
+        while (rc != OK)
+            rc = input_bool(&yn, "Want to try again? ");
+        if (yn == true)
+            rc = input_float(&new.size, 10, "Size (m^2) (15; 2000, power < -4): ");
+        if (yn == false)
+            return IO_ERR;
+    }
     if (rc != OK)
         return rc;
-    rc = input_si(&new.rooms, "How many rooms does it have? ");
+    rc = input_si(&new.rooms, 2, "How many rooms does it have? (0; 99): ");
     if (rc != OK)
         return rc;
-    rc = input_int(&new.price, "What is the price of 1 sq.m? ");
+    rc = input_int(&new.price, 8, "What is the price of 1 sq.m? (0; 99999999):");
     if (rc != OK)
         return rc;
     rc = input_bool(&new.is_new, "Is the flat new? ");
@@ -52,13 +72,24 @@ int add_line(ft *flats, int length)
     }
     else
     {
-        rc = input_si(&new.type.oldflat.year, "When was it built? ");
+        rc = input_si(&new.type.oldflat.year, 4, "When was it built? (1800; 2018): ");
+        while (new.type.oldflat.year < 1800 || new.type.oldflat.year > 2018)
+        {
+            rc = IO_ERR;
+            printf("Invalid range\n");
+            while (rc != OK)
+                rc = input_bool(&yn, "Want to try again? ");
+            if (yn == true)
+                rc = input_si(&new.type.oldflat.year, 4, "When was it built? (1800; 2018): ");
+            if (yn == false)
+                return IO_ERR;
+        }
         if (rc != OK)
             return rc;
-        rc = input_si(&new.type.oldflat.owners, "How many people have owned it? ");
+        rc = input_si(&new.type.oldflat.owners, 3, "How many people have owned it? (0; 999):");
         if (rc != OK)
             return rc;
-        rc = input_si(&new.type.oldflat.dwellers, "How many people lived here before? ");
+        rc = input_si(&new.type.oldflat.dwellers, 2, "How many people lived here before? (0; 99):");
         if (rc != OK)
             return rc;
         rc = input_bool(&new.type.oldflat.animal, "Were there any animals? ");

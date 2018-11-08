@@ -145,9 +145,11 @@ int input_string(char *str, int n, char *key)
     while ((c = getchar()) != '\n' && c != EOF)
     {
         if (i < n - 1)
-            str[i++] = c;
+            str[i] = c;
+        i++;
     }
     str[i] = '\0';
+    printf("i = %d\n", i);
     if (i > n || i == 0)
     {
         printf("Empty input or reached the maximum size of holder\n");
@@ -164,131 +166,191 @@ int input_string(char *str, int n, char *key)
 
 /**
  * @brief input_float ввод вещественного числа
- * @param size
- * @param key
- * @return
+ * @param size - переменная, где хранить считанное число
+ * @param key - пояснения к вводу
+ * @return код ошибки
+ * печатает пояснение к вводу, ожидает ввода. Данный вариант реализации не обрабатывает пустой ввод. Считывает вещественное число.
+ * Если число было удачно считано и оно положительное, мы присваиваем его значение переданной переменной. Если пользователь ошибся
+ * Если чтение выдало ошибку, очищаем потом ввода, сообщаем пользователю об ошибке.
+ * Спрашиваем у пользователя хочет ли он попробовать еще, до тех пор пока он не ответить да или нет
+ * если да - вызываем функцию ввода еще раз
+ * если нет - возвращаем код ошибки ввода.
  */
-int input_float(float *size, char *key)
+int input_float(float *num, int n, char *key)
 {
-    printf("%s", key);
+    char buf[n];
+    float a = 0, dot = 1;
+    int flag = 0;
     int rc = OK;
-    float tmp;
     bool yn;
-    if (scanf("%f", &tmp) != 1)
+    if (input_string(buf, n + 1, key) != OK)
+        return IO_ERR;
+    printf("buf - %s\n", buf);
+    for (int i = 0; buf[i] != '\0'; i++)
     {
-        clean_stdin();
-        printf("Invalid input\n");
-        rc = IO_ERR;
-        while (rc != OK)
-            rc = input_bool(&yn, "Want to try again? ");
-        if (yn == true)
-            rc = input_float(size, key);
-        if (yn == false)
-            rc = IO_ERR;
-    }
-    else
-    {
-        if (tmp <= 0)
+        if (isdigit(buf[i]) || buf[i] == '.')
         {
-            printf("<=0\n");
-            clean_stdin();
-            printf("Invalid input\n");
+            printf("true\n");
+            if (buf[i] == '.')
+            {
+                if (flag == 1)
+                {
+                    printf("Invalid input two dots\n");
+                    rc = IO_ERR;
+                    while (rc != OK)
+                        rc = input_bool(&yn, "Want to try again? ");
+                    if (yn == true)
+                        rc = input_float(num, n, key);
+                    if (yn == false)
+                        rc = IO_ERR;
+                    return rc;
+                }
+                else
+                    flag = 1;
+            }
+            else
+            {
+                printf("a - %f\n", a);
+                if (a != 0)
+                    a *= 10;
+                printf("a - %f\n", a);
+                a += buf[i] - '0';
+                printf("a - %f\n", a);
+                if (flag == 1)
+                    dot *= 10;
+                if (dot == 100000)
+                {
+                    printf("Invalid input power\n");
+                    rc = IO_ERR;
+                    while (rc != OK)
+                        rc = input_bool(&yn, "Want to try again? ");
+                    if (yn == true)
+                        rc = input_float(num, n, key);
+                    if (yn == false)
+                        rc = IO_ERR;
+                    return rc;
+                }
+                printf("a - %f\n", a);
+            }
+        }
+        else
+        {
+            printf("Invalid input not digit\n");
             rc = IO_ERR;
             while (rc != OK)
                 rc = input_bool(&yn, "Want to try again? ");
             if (yn == true)
-                rc = input_float(size, key);
+                rc = input_float(num, n, key);
             if (yn == false)
                 rc = IO_ERR;
-        }
-        else
-        {
-            *size = tmp;
-            clean_stdin();
+            return rc;
         }
     }
+    if (flag == 1)
+        a /= dot;
+    printf("number - %f\n", a);
+    *num = a;
     return rc;
 }
 
-int input_si(short int *a, char *key)
+/**
+ * @brief input_si ввод short int
+ * @param a - переменная, где хранить считанное число
+ * @param key - пояснения к вводу
+ * @return код ошибки
+ * печатает пояснение к вводу, ожидает ввода. Данный вариант реализации не обрабатывает пустой ввод. Считывает короткое целое число.
+ * Если число было удачно считано и оно находится в диапазоне (0, 32767), мы присваиваем его значение переданной переменной. Если пользователь ошибся
+ * Если чтение выдало ошибку, очищаем потом ввода, сообщаем пользователю об ошибке.
+ * Спрашиваем у пользователя хочет ли он попробовать еще, до тех пор пока он не ответить да или нет
+ * если да - вызываем функцию ввода еще раз
+ * если нет - возвращаем код ошибки ввода.
+ */
+int input_si(short int *num, int n, char *key)
 {
-    bool yn;
-    printf("%s", key);
+    char buf[n];
+    short int a = 0;
     int rc = OK;
-    short int tmp;
-    if (scanf("%hi", &tmp) != 1)
+    bool yn;
+    if (input_string(buf, n + 1, key) != OK)
+        return IO_ERR;
+    printf("buf - %s\n", buf);
+    for (int i = 0; buf[i] != '\0'; i++)
     {
-        clean_stdin();
-        printf("Invalid input\n");
-        rc = IO_ERR;
-        while (rc != OK)
-            rc = input_bool(&yn, "Want to try again? ");
-        if (yn == true)
-            rc = input_si(a, key);
-        if (yn == false)
-            rc = IO_ERR;
-    }
-    else
-    {
-        if(!(0 < tmp && tmp <= 32767))
+        if (isdigit(buf[i]))
         {
-            printf("<=0\n");
-            clean_stdin();
-            printf("Invalid input\n");
+            printf("true\n");
+            printf("a - %d\n", a);
+            if (a != 0)
+                a *= 10;
+            printf("a - %d\n", a);
+            a += buf[i] - '0';
+            printf("a - %d\n", a);
+        }
+        else
+        {
+            printf("Invalid input not digit\n");
             rc = IO_ERR;
             while (rc != OK)
                 rc = input_bool(&yn, "Want to try again? ");
             if (yn == true)
-                rc = input_si(a, key);
+                rc = input_si(num, n, key);
             if (yn == false)
                 rc = IO_ERR;
-        }
-        else
-        {
-            *a = tmp;
-            clean_stdin();
+            return rc;
         }
     }
+    printf("number - %d\n", a);
+    *num = a;
     return rc;
 }
 
-int input_int(int* a, char *key)
+/**
+ * @brief input_int ввод целого числа
+ * @param a - переменная, где хранить считанное число
+ * @param key - пояснения к вводу
+ * @return код ошибки
+ * печатает пояснение к вводу, ожидает ввода. Данный вариант реализации не обрабатывает пустой ввод. Считывает короткое целое число.
+ * Если число было удачно считано и оно находится в диапазоне (0, 4294967295), мы присваиваем его значение переданной переменной. Если пользователь ошибся
+ * Если чтение выдало ошибку, очищаем потом ввода, сообщаем пользователю об ошибке.
+ * Спрашиваем у пользователя хочет ли он попробовать еще, до тех пор пока он не ответить да или нет
+ * если да - вызываем функцию ввода еще раз
+ * если нет - возвращаем код ошибки ввода.
+ */
+int input_int(int *num, int n, char *key)
 {
-    bool yn;
-    printf("%s", key);
+    char buf[n];
+    int a = 0;
     int rc = OK;
-    int tmp;
-    if (scanf("%d", &tmp) != 1)
+    bool yn;
+    if (input_string(buf, n + 1, key) != OK)
+        return IO_ERR;
+    printf("buf - %s\n", buf);
+    for (int i = 0; buf[i] != '\0'; i++)
     {
-        clean_stdin();
-        printf("Invalid input\n");
-        rc = IO_ERR;
-        while (rc != OK)
-            rc = input_bool(&yn, "Want to try again? ");
-        if (yn == true)
-            rc = input_int(a, key);
-        if (yn == false)
-            rc = IO_ERR;
-    }
-    else
-    {
-        if (tmp < 0 || tmp > 4294967295)
+        if (isdigit(buf[i]))
         {
-            clean_stdin();
-            printf("Invalid input\n");
+            printf("true\n");
+            printf("a - %d\n", a);
+            if (a != 0)
+                a *= 10;
+            printf("a - %d\n", a);
+            a += buf[i] - '0';
+            printf("a - %d\n", a);
+        }
+        else
+        {
+            printf("Invalid input not digit\n");
             rc = IO_ERR;
             while (rc != OK)
                 rc = input_bool(&yn, "Want to try again? ");
             if (yn == true)
-                rc = input_int(a, key);
+                rc = input_int(num, n, key);
             if (yn == false)
                 rc = IO_ERR;
-        }
-        else
-        {
-            *a = tmp;
-            clean_stdin();
+            return rc;
         }
     }
+    printf("number - %d\n", a);
+    *num = a;
     return rc;
 }
