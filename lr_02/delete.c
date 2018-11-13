@@ -71,9 +71,9 @@ int search(ft *flats, int length)//sorting price with keys
 //Найти все вторичное 2-х комнатное жилье в указанном ценовом диапазоне без животных
 {
     int lp, rp;
-    if (input_int(&lp, 8, "Input the lowest price: ") == IO_ERR)
+    if (input_int(&lp, 9, "Input the lowest price: (0, 999999999)") == IO_ERR)
         return IO_ERR;
-    if (input_int(&rp, 8, "Input the highest price: ") == IO_ERR)
+    if (input_int(&rp, 9, "Input the highest price: (0,999999999)") == IO_ERR)
         return IO_ERR;
     int count = 0;
     for (int i = 0; i < length; i ++)
@@ -82,7 +82,7 @@ int search(ft *flats, int length)//sorting price with keys
         {
             if (count == 0)
                 print_head();
-            printf("%3d", i);
+            printf("%3d", count + 1);
             print_line(flats[i]);
             count++;
         }

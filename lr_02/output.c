@@ -3,7 +3,7 @@
 
 void print_line(struct flat_t flat)
 {
-    printf("|%6hu|%40s|%10.3f|%6hu|%10d|", flat.id, flat.adress, flat.size, flat.rooms, flat.price);
+    printf("|%6hu|%40s|%10.4f|%6hu|%10d|", flat.id, flat.adress, flat.size, flat.rooms, flat.price);
     if (flat.is_new == true)
     {
         printf(" new|");

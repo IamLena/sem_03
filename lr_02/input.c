@@ -149,7 +149,6 @@ int input_string(char *str, int n, char *key)
         i++;
     }
     str[i] = '\0';
-    printf("i = %d\n", i);
     if (i > n || i == 0)
     {
         printf("Empty input or reached the maximum size of holder\n");
@@ -183,19 +182,17 @@ int input_float(float *num, int n, char *key)
     int flag = 0;
     int rc = OK;
     bool yn;
-    if (input_string(buf, n + 1, key) != OK)
+    if (input_string(buf, n, key) != OK)
         return IO_ERR;
-    printf("buf - %s\n", buf);
     for (int i = 0; buf[i] != '\0'; i++)
     {
         if (isdigit(buf[i]) || buf[i] == '.')
         {
-            printf("true\n");
             if (buf[i] == '.')
             {
                 if (flag == 1)
                 {
-                    printf("Invalid input two dots\n");
+                    printf("Invalid input\n");
                     rc = IO_ERR;
                     while (rc != OK)
                         rc = input_bool(&yn, "Want to try again? ");
@@ -210,12 +207,9 @@ int input_float(float *num, int n, char *key)
             }
             else
             {
-                printf("a - %f\n", a);
                 if (a != 0)
                     a *= 10;
-                printf("a - %f\n", a);
                 a += buf[i] - '0';
-                printf("a - %f\n", a);
                 if (flag == 1)
                     dot *= 10;
                 if (dot == 100000)
@@ -230,12 +224,11 @@ int input_float(float *num, int n, char *key)
                         rc = IO_ERR;
                     return rc;
                 }
-                printf("a - %f\n", a);
             }
         }
         else
         {
-            printf("Invalid input not digit\n");
+            printf("Invalid input\n");
             rc = IO_ERR;
             while (rc != OK)
                 rc = input_bool(&yn, "Want to try again? ");
@@ -248,7 +241,6 @@ int input_float(float *num, int n, char *key)
     }
     if (flag == 1)
         a /= dot;
-    printf("number - %f\n", a);
     *num = a;
     return rc;
 }
@@ -271,24 +263,19 @@ int input_si(short int *num, int n, char *key)
     short int a = 0;
     int rc = OK;
     bool yn;
-    if (input_string(buf, n + 1, key) != OK)
+    if (input_string(buf, n, key) != OK)
         return IO_ERR;
-    printf("buf - %s\n", buf);
     for (int i = 0; buf[i] != '\0'; i++)
     {
         if (isdigit(buf[i]))
         {
-            printf("true\n");
-            printf("a - %d\n", a);
             if (a != 0)
                 a *= 10;
-            printf("a - %d\n", a);
             a += buf[i] - '0';
-            printf("a - %d\n", a);
         }
         else
         {
-            printf("Invalid input not digit\n");
+            printf("Invalid input\n");
             rc = IO_ERR;
             while (rc != OK)
                 rc = input_bool(&yn, "Want to try again? ");
@@ -299,7 +286,6 @@ int input_si(short int *num, int n, char *key)
             return rc;
         }
     }
-    printf("number - %d\n", a);
     *num = a;
     return rc;
 }
@@ -324,22 +310,17 @@ int input_int(int *num, int n, char *key)
     bool yn;
     if (input_string(buf, n + 1, key) != OK)
         return IO_ERR;
-    printf("buf - %s\n", buf);
     for (int i = 0; buf[i] != '\0'; i++)
     {
         if (isdigit(buf[i]))
         {
-            printf("true\n");
-            printf("a - %d\n", a);
             if (a != 0)
                 a *= 10;
-            printf("a - %d\n", a);
             a += buf[i] - '0';
-            printf("a - %d\n", a);
         }
         else
         {
-            printf("Invalid input not digit\n");
+            printf("Invalid input\n");
             rc = IO_ERR;
             while (rc != OK)
                 rc = input_bool(&yn, "Want to try again? ");
@@ -350,7 +331,6 @@ int input_int(int *num, int n, char *key)
             return rc;
         }
     }
-    printf("number - %d\n", a);
     *num = a;
     return rc;
 }

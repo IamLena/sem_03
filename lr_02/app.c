@@ -74,6 +74,7 @@ int main(void)
                 }
                 else
                     printf("Be aware you have a opened saved table\n");
+                free(flats);
             }
             printf("OPENING THE TABLE\n");
             char file[20];
@@ -115,6 +116,7 @@ int main(void)
                 }
                 else
                     printf("Be aware you have a opened saved table\n");
+                free(flats);
             }
             printf("CREATING A NEW TABLE\n");
             flats = create(&length);
@@ -122,7 +124,10 @@ int main(void)
                 printf("Can not create a table.\n");
             else
             {
-                printf("The database is created.\n");
+                if (length == 0)
+                    printf("An empty table created.\n");
+                else
+                    printf("The database is created.\n");
                 saved_flag = 0;
             }
         }
@@ -130,7 +135,6 @@ int main(void)
         {
             printf("ADDING AN ELEMENT\n");
             ft *tmp = realloc(flats, (length + 1) * sizeof(ft));
-            printf("real");
             if (tmp)
             {
                 if (add_line(tmp, length) == OK)
@@ -141,12 +145,12 @@ int main(void)
                 }
                 else
                 {
-                    printf("1 can not add a line\n");
+                    printf("can not add a line\n");
                     free(tmp);
                 }
             }
             else
-                printf("3 can not add a line.\n");
+                printf("can not add a line.\n");
         }
         else if (action == ACTION_5)//delete
         {
@@ -198,12 +202,11 @@ int main(void)
             else
             {
                 printf("\t....\nCALCULATING EFFICIENCY\n");
-                printf("bubble sort with keys\n");
                 unsigned long time[7];
                 unsigned long t1, t2, t;
                 k_el *table1;
                 ft *table2;
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 20; i++)
                 {
                     t1 =  tick();
                     table1 = sort_keys(flats, length, &t);
@@ -216,9 +219,9 @@ int main(void)
 //                    unsigned long t_sort1 = t2 - t1 - t;
 //                    printf("%lu %lu %lu %lu\n", t2, t1, t2 - t1, t);
                 }
-                unsigned long t_sort1 = average(time, 10);
+                unsigned long t_sort1 = average(time, 20);
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 20; i++)
                 {
                     t1 =  tick();
                     table2 = sort_flats(flats, length, &t);
@@ -231,9 +234,9 @@ int main(void)
 //                    unsigned long t_sort1 = t2 - t1 - t;
 //                    printf("%lu %lu %lu %lu\n", t2, t1, t2 - t1, t);
                 }
-                unsigned long t_sort2 = average(time, 10);
+                unsigned long t_sort2 = average(time, 20);
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 20; i++)
                 {
                     t1 =  tick();
                     table1 = sort_keys_shaker(flats, length, &t);
@@ -246,9 +249,9 @@ int main(void)
 //                    unsigned long t_sort1 = t2 - t1 - t;
 //                    printf("%lu %lu %lu %lu\n", t2, t1, t2 - t1, t);
                 }
-                unsigned long t_sort3 = average(time, 10);
+                unsigned long t_sort3 = average(time, 20);
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 20; i++)
                 {
                     t1 =  tick();
                     table2 = sort_flats_shaker(flats, length, &t);
@@ -261,7 +264,7 @@ int main(void)
 //                    unsigned long t_sort1 = t2 - t1 - t;
 //                    printf("%lu %lu %lu %lu\n", t2, t1, t2 - t1, t);
                 }
-                unsigned long t_sort4 = average(time, 10);
+                unsigned long t_sort4 = average(time, 20);
 
                 printf("Array        |   Bubble    |   Shaker    |\n");
                 printf("------------------------------------------\n");

@@ -1,6 +1,7 @@
 #include "derectives.h"
 #include "input.h"
 #include "add.h"
+#include "output.h"
 
 /**
  * @brief add_line добавление элемента
@@ -72,15 +73,15 @@ int add_line(ft *flats, int length)
     }
     else
     {
-        rc = input_si(&new.type.oldflat.year, 4, "When was it built? (1800; 2018): ");
-        while (new.type.oldflat.year < 1800 || new.type.oldflat.year > 2018)
+        rc = input_si(&new.type.oldflat.year, 5, "When was it built? (1700; 2018): ");
+        while (new.type.oldflat.year < 1700 || new.type.oldflat.year > 2018)
         {
             rc = IO_ERR;
-            printf("Invalid range\n");
+            printf("Invalid range %d %d\n", new.type.oldflat.year, new.id);
             while (rc != OK)
                 rc = input_bool(&yn, "Want to try again? ");
             if (yn == true)
-                rc = input_si(&new.type.oldflat.year, 4, "When was it built? (1800; 2018): ");
+                rc = input_si(&new.type.oldflat.year, 5, "When was it built? (1700; 2018): ");
             if (yn == false)
                 return IO_ERR;
         }
@@ -103,7 +104,7 @@ int add_line(ft *flats, int length)
                 return IO_ERR;
         }
     }
-    printf("%hu %s %.3f %hu %d ", new.id, new.adress, new.size, new.rooms, new.price);
+    printf("%hu| %s| %.3f| %hu| %d ", new.id, new.adress, new.size, new.rooms, new.price);
     if (new.is_new == true)
     {
         printf("new ");
