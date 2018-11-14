@@ -1,5 +1,8 @@
 app.c
 error.h
+file.c
+file.h
+in.txt
 mult.h
 mult.c
 io.h

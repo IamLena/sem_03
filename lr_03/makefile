@@ -7,11 +7,14 @@ app.o: app.c *.h
 io.o: io.c *.h
 	$(CC) $(PARAMS) -c io.c
 
+file.o: file.c *.h
+	$(CC) $(PARAMS) -c file.c
+
 mult.o: mult.c *.h
 	$(CC) $(PARAMS) -c mult.c
 
-app.exe: app.o io.o mult.o
-	$(CC) -o app.exe app.o io.o mult.o
+app.exe: app.o io.o mult.o file.o
+	$(CC) -o app.exe app.o io.o mult.o file.o
 
 clean:
 	rm *.exe *.o

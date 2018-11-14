@@ -5,6 +5,7 @@
 #include "error.h"
 #include "io.h"
 #include "mult.h"
+#include "file.h"
 
 int main(void)
 {
@@ -22,8 +23,8 @@ int main(void)
     printf("%d %d\n", n, m);*/
 
     char mode;
-    mode:
-    if (input_string(&mode, 2, "--------------------------\n1-file\n2-manual\n"
+    mode_matrix:
+    if (input_string(&mode, 2, "--------------------------\nInput or create the matrix\n1-file\n2-manual\n"
                      "3-auto(%)\nInput the mode of creation: ") != OK)
     {
         printf("Exiting the program");
@@ -32,6 +33,17 @@ int main(void)
     if (mode - '0' == 1)
     {
         printf("working with file\n");
+        FILE *f_matrix = NULL;
+        if (get_file(f_matrix) == FILE_ERR)
+        {
+            printf("Exiting the program");
+            return FILE_ERR;
+        }
+        printf("ready\n");
+        int code = coord_usual();
+        printf("code - %d\n", code);
+        fclose(f_matrix);
+
     }
     else if (mode - '0' == 2)
     {
@@ -49,13 +61,56 @@ int main(void)
         while (again != OK)
             again = input_bool(&yn, "Want to try again? ");
         if (yn == true)
-            goto mode;
+            goto mode_matrix;
         if (yn == false)
         {
             printf("Exiting the program");
             return IO_ERR;
         }
     }
+    mode_vector:
+    if (input_string(&mode, 2, "--------------------------\nInput or create the vector\n1-file\n2-manual\n"
+                 "3-auto(%)\nInput the mode of creation: ") != OK)
+    {
+        printf("Exiting the program");
+        return IO_ERR;
+    }
+    if (mode - '0' == 1)
+    {
+        printf("working with file\n");
+        FILE *f_vector = NULL;
+        if (get_file(f_vector) == FILE_ERR)
+        {
+            printf("Exiting the program");
+            return FILE_ERR;
+        }
+        printf("ready\n");
+        fclose(f_vector);
+    }
+    else if (mode - '0' == 2)
+    {
+        printf("manual input\n");
+    }
+    else if (mode - '0' == 3)
+    {
+        printf("auto percentage");
+    }
+    else
+    {
+        printf("Invalid input\n");
+        int again = IO_ERR;
+        bool yn;
+        while (again != OK)
+            again = input_bool(&yn, "Want to try again? ");
+        if (yn == true)
+            goto mode_vector;
+        if (yn == false)
+        {
+            printf("Exiting the program");
+            return IO_ERR;
+        }
+    }
+
 
     return rc;
 }

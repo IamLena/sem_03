@@ -88,7 +88,8 @@ int input_string(char *str, int n, char *key)
     str[i] = '\0';
     if (i > n || i == 0)
     {
-        printf("Empty input or reached the maximum size of holder\n");
+        //printf("Empty input or reached the maximum size of holder\n");
+        printf("Invalid Input\n");
         rc = IO_ERR;
         while (rc != OK)
             rc = input_bool(&yn, "Want to try again? ");
@@ -230,5 +231,46 @@ int input_double(double *num, int n, char *key)
         a /= dot;
     *num = a;
     return rc;
+}
+
+////координатный или в виде матрицы
+int coord_usual()
+{
+    printf("--------------\n1-coordinate\n2-by lines\nChoose the mode: ");
+    char c1 = getchar();
+    if (c1 == '\n' || c1 == EOF)
+    {
+        printf("Invalid input\n");
+
+    }
+    else
+    {
+        char c2 = getchar();
+        if (c2 == '\n')
+        {
+            if (c1 == '1' && c2 == '\n')
+                return 1;
+            else if (c1 == '2' && c2 == '\n')
+                return 2;
+            else
+                printf("Invalid input\n");
+        }
+        else
+        {
+            printf("Invalid Input\n");
+            clean_stdin();
+        }
+
+    }
+    int rc = -1;
+    bool yn;
+    while (rc != OK)
+        rc = input_bool(&yn, "Want to try again? ");
+    if (yn == true)
+        rc = coord_usual();
+    if (yn == false)
+        rc = -1;
+    return rc;
+
 }
 

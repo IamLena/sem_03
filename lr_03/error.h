@@ -4,5 +4,6 @@
 #define OK 0
 #define IO_ERR 1
 #define MEM_ERR 2
+#define FILE_ERR 3
 
 #endif // ERROR_H
