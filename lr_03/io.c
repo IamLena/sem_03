@@ -271,6 +271,15 @@ int coord_usual()
     if (yn == false)
         rc = -1;
     return rc;
-
 }
 
+//печать матрицы
+void print_matrix(double **mtr, int n, int m)
+{
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+            printf("%f ", mtr[i][j]);
+        printf("\n");
+    }
+}

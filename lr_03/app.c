@@ -6,6 +6,7 @@
 #include "io.h"
 #include "mult.h"
 #include "file.h"
+#include "matrix_mem.h"
 
 int main(void)
 {
@@ -34,14 +35,34 @@ int main(void)
     {
         printf("working with file\n");
         FILE *f_matrix = NULL;
-        if (get_file(f_matrix) == FILE_ERR)
+        if (get_file(&f_matrix) == FILE_ERR)
         {
             printf("Exiting the program");
             return FILE_ERR;
         }
-        printf("ready\n");
         int code = coord_usual();
-        printf("code - %d\n", code);
+        int n, m, ok;
+        double **matrix;
+        if (code == 1)
+        {
+            printf("coordinats\n");
+            matrix = read_matrix_coord(f_matrix, &n, &m, &ok);
+            printf("ok - %d\n", ok);
+            print_matrix(matrix, n, m);
+        }
+        else if (code == 2)
+        {
+            printf("usual matrix\n");
+            ok = read_matrix_lines(f_matrix, &matrix, &n, &m);
+            printf("ok - %d\n", ok);
+            print_matrix(matrix, n, m);
+        }
+        else
+        {
+            printf("Exiting the program");
+            fclose(f_matrix);
+            return IO_ERR;
+        }
         fclose(f_matrix);
 
     }
@@ -79,7 +100,7 @@ int main(void)
     {
         printf("working with file\n");
         FILE *f_vector = NULL;
-        if (get_file(f_vector) == FILE_ERR)
+        if (get_file(&f_vector) == FILE_ERR)
         {
             printf("Exiting the program");
             return FILE_ERR;
