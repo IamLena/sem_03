@@ -11,6 +11,8 @@
 int main(void)
 {
     int rc = OK;
+    int n, m;
+    double **matrix;
 
     char mode;
     mode_matrix:
@@ -30,8 +32,7 @@ int main(void)
             goto end;
         }
         int code = coord_usual();
-        int n, m, ok;
-        double **matrix;
+        int ok;
         if (code == 1)
         {
             printf("coordinats\n");
@@ -43,6 +44,8 @@ int main(void)
             }
             printf("ok - %d\n", ok);
             print_matrix(matrix, n, m);
+            printf("double* - %d, double - %d\n", (int)sizeof(double*), (int)sizeof(double));
+            printf("mem size - %d", memory_size(matrix, n, m));
         }
         else if (code == 2)
         {
@@ -120,6 +123,54 @@ int main(void)
     else if (mode - '0' == 2)
     {
         printf("manual input\n");
+        double vector[m];
+        int code = coord_usual();
+        if (code == 2)
+        {
+            for (int i = 0; i < m; i++)
+                if (input_double(&vector[i], 10,"input an element: ") != OK)
+                {
+                    rc = IO_ERR;
+                    goto end;
+                }
+            print_array(vector, m);
+        }
+        else if (code == 1)
+        {
+            int els_number;
+            input_int(&els_number, 4, "input the number of elemnets of nonzero value: ");
+            if (els_number == 0)
+                for (int i = 0; i < m; i++)
+                    vector[i] = 0;
+            else if (els_number > 0 && els_number <= m)
+            {
+                int d, el;
+                printf("press enter at the end of input of all elements\n");
+                for (int i = 0; i < els_number; i++)
+                {
+                    d = input_int(&i, 2, "input index:");
+                    if (d != OK)
+                    {
+                        rc = IO_ERR;
+                        goto end;
+                    }
+                    if (i < 0 || i >= m)
+                    {
+                        rc = IO_ERR;
+                        goto end;
+                    }
+                    el = input_double(&vector[i], 10, "input a value: ");
+                    if (el != OK)
+                    {
+                        rc = IO_ERR;
+                        goto end;
+                    }
+                    printf("%d %lf\n", i, vector[i]);
+                }
+                clean_stdin();
+                print_array(vector, m);
+            }
+        }
     }
     else if (mode - '0' == 3)
     {

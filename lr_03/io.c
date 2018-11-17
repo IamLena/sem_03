@@ -168,15 +168,37 @@ int input_double(double *num, int n, char *key)
     char buf[n];
     double a = 0, dot = 1;
     int flag = 0;
+    int flag_minus = 0;
     int rc = OK;
     bool yn;
     if (input_string(buf, n, key) != OK)
         return IO_ERR;
     for (int i = 0; buf[i] != '\0'; i++)
     {
-        if (isdigit(buf[i]) || buf[i] == '.')
+        if (isdigit(buf[i]) || buf[i] == '.' || buf[i] == '-')
         {
-            if (buf[i] == '.')
+            if (buf[i] == '-')
+            {
+                if (flag_minus == 0 && i == 0)
+                {
+                    dot = -1;
+                    flag_minus = 1;
+                }
+                else
+                {
+                    printf("Invalid input\n");
+                    rc = IO_ERR;
+                    while (rc != OK)
+                        rc = input_bool(&yn, "Want to try again? ");
+                    if (yn == true)
+                        rc = input_double(num, n, key);
+                    if (yn == false)
+                        rc = IO_ERR;
+                    return rc;
+                }
+
+            }
+            else if (buf[i] == '.')
             {
                 if (flag == 1)
                 {
@@ -227,8 +249,7 @@ int input_double(double *num, int n, char *key)
             return rc;
         }
     }
-    if (flag == 1)
-        a /= dot;
+    a /= dot;
     *num = a;
     return rc;
 }
@@ -260,17 +281,8 @@ int coord_usual()
             printf("Invalid Input\n");
             clean_stdin();
         }
-
     }
-    int rc = -1;
-    bool yn;
-    while (rc != OK)
-        rc = input_bool(&yn, "Want to try again? ");
-    if (yn == true)
-        rc = coord_usual();
-    if (yn == false)
-        rc = -1;
-    return rc;
+    return -1;
 }
 
 //печать матрицы
@@ -282,4 +294,10 @@ void print_matrix(double **mtr, int n, int m)
             printf("%f ", mtr[i][j]);
         printf("\n");
     }
+}
+
+void print_array(double *vector, int m)
+{
+    for (int i = 0; i < m; i++)
+        printf("%lf ", vector[i]);
 }

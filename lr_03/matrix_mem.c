@@ -36,3 +36,8 @@ double **allocate_matrix(int n, int m)
     ptrs[n] = data;
     return ptrs;
 }
+
+int memory_size(double **mtr, int n, int m)
+{
+    return (n * sizeof(double*) + n * m * sizeof(double));
+}

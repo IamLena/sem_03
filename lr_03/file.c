@@ -57,7 +57,6 @@ double **read_matrix_coord(FILE *f, int *n, int *m, int *rc)
     double **new_matrix = NULL;
 
     int elements;
-    printf("kuku\n");
     if (fscanf(f, "%d %d %d", n, m, &elements) == 3)
     {
         if (*n > 0 && *m > 0 && elements > 0 && elements <= (*n) * (*m))
@@ -78,6 +77,7 @@ double **read_matrix_coord(FILE *f, int *n, int *m, int *rc)
                         {
                             if (!(i == i_prev && j == j_prev))
                             {
+                                //ошибка если повторяющиес не подряд
                                 i_prev = i;
                                 j_prev = j;
                                 i--;
