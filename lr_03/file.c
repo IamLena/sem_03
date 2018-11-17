@@ -60,7 +60,6 @@ double **read_matrix_coord(FILE *f, int *n, int *m, int *rc)
     printf("kuku\n");
     if (fscanf(f, "%d %d %d", n, m, &elements) == 3)
     {
-        printf("size - %d %d %d\n", *n, *m, elements);
         if (*n > 0 && *m > 0 && elements > 0 && elements <= (*n) * (*m))
         {
             new_matrix = allocate_matrix(*n, *m);
@@ -79,7 +78,6 @@ double **read_matrix_coord(FILE *f, int *n, int *m, int *rc)
                         {
                             if (!(i == i_prev && j == j_prev))
                             {
-                                printf("element %d %d %lf\n", i, j, el);
                                 i_prev = i;
                                 j_prev = j;
                                 i--;
@@ -132,20 +130,22 @@ int read_matrix_lines(FILE *f, double ***pmtr, int *pn, int *pm)
     int rc = OK;
     if (fscanf(f, "%d %d", pn, pm) == 2 && *pn > 0 && *pm > 0)
     {
-        printf("%d %d %d\n");
         double **tmp = allocate_matrix(*pn, *pm);
         if (!tmp)
             rc = MEM_ERR;
         else
         {
             for (int i = 0; i < *pn; i++)
+            {
                 for (int j = 0; j < *pm; j++)
+                {
                     if (fscanf(f, "%lf", &tmp[i][j]) != 1)
                     {
                         rc = CONT_ERR;
                         break;
-                        //ошибка вот здесь! если жлементов меньше!
                     }
+                }
+            }
         }
         char c;
         if (fscanf(f, "%c", &c) == 1 && c != '\n')
