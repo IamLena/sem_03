@@ -10,6 +10,7 @@ int main(void)
     int n, m;
     double *vector;
     double *result;
+    unsigned long t1, t2;
 
     rc = get_matrix(&matrix, &n, &m);
     if (rc == OK)
@@ -20,8 +21,10 @@ int main(void)
         {
             print_array(vector, m);
             printf("\n");
+            t1 = tick();
             multiply_usual(matrix, vector, n, m, &result);
-            printf("mult here");
+            t2 = tick();
+            printf("time - %lu\n", t2 - t1);
         }
     }
     if (rc == IO_ERR)

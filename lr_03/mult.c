@@ -6,6 +6,13 @@
 #include "io.h"
 #include "mult.h"
 
+unsigned long tick(void)
+{
+    unsigned long long d;
+    __asm__ __volatile__ ("rdtsc" : "=A" (d) );
+    return d;
+}
+
 void multiply_usual(double **mtr, double *column, int n, int m, double **res)
 {
     printf("n - %d, m - %d\n", n, m);
