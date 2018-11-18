@@ -1,6 +1,7 @@
 #include "error.h"
 #include "get.h"
 #include "io.h"
+#include "mult.h"
 
 int main(void)
 {
@@ -8,7 +9,7 @@ int main(void)
     double **matrix;
     int n, m;
     double *vector;
-    //double *result;
+    double *result;
 
     rc = get_matrix(&matrix, &n, &m);
     if (rc == OK)
@@ -18,7 +19,8 @@ int main(void)
         if (rc == OK)
         {
             print_array(vector, m);
-            //result = mult(matrix, vector, n, m);
+            printf("\n");
+            multiply_usual(matrix, vector, n, m, &result);
             printf("mult here");
         }
     }
