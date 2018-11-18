@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <string.h>
 
 #include "error.h"
 #include "io.h"
@@ -300,4 +301,32 @@ void print_array(double *vector, int m)
 {
     for (int i = 0; i < m; i++)
         printf("%lf ", vector[i]);
+}
+
+int get_mode(char *valid, char *key)
+{
+    printf("%s ", key);
+    char c1 = getchar();
+    if (c1 == '\n' || c1 == EOF)
+    {
+        printf("Invalid input\n");
+
+    }
+    else
+    {
+        char c2 = getchar();
+        if (c2 == '\n')
+        {
+            if (strchr(valid, c1) != NULL)
+                return (c1 - '0');
+            else
+                printf("Invalid input\n");
+        }
+        else
+        {
+            printf("Invalid Input\n");
+            clean_stdin();
+        }
+    }
+    return get_mode(valid, key);
 }

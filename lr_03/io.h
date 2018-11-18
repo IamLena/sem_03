@@ -11,5 +11,6 @@ int input_double(double *num, int n, char *key);
 int coord_usual();
 void print_matrix(double **mtr, int n, int m);
 void print_array(double *vector, int m);
+int get_mode(char *valid, char *key);
 
 #endif // IO_H
