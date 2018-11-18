@@ -41,3 +41,86 @@ int memory_size(double **mtr, int n, int m)
 {
     return (n * sizeof(double*) + n * m * sizeof(double));
 }
+
+int make_sparse_matrix(double **mtr, int n, int m)
+{
+    print_matrix(mtr, n, m);
+    printf("-------------\n");
+    double *data;
+    int *data_j, *data_i;
+    int count = 0;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+        {
+            if (mtr[i][j] != 0)
+                count++;
+        }
+    }
+    printf("count - %d\n", count);
+    data = malloc(count * sizeof(double));
+    if (!data)
+        return MEM_ERR;
+    data_j = malloc(count * sizeof(int));
+    if (!data_j)
+        return MEM_ERR;
+    data_i = malloc((n + 1) * sizeof(int));
+    if (!data_i)
+        return MEM_ERR;
+    count = 0;
+    for (int i = 0; i < n; i++)
+    {
+        data_i[i] = count;
+        for (int j = 0; j < m; j++)
+            if (mtr[i][j] != 0)
+            {
+                data[count] = mtr[i][j];
+                data_j[count] = j;
+                count++;
+            }
+    }
+    data_i[n] = count;
+    printf("AN: ");
+    print_array(data, count);
+    printf("AJ: ");
+    print_int_array(data_j, count);
+    printf("AI: ");
+    print_int_array(data_i, n + 1);
+    return OK;
+}
+
+int make_sparse_vector(double *vector, int n)
+{
+    print_array(vector, n);
+    printf("-------------\n");
+    double *data;
+    int *data_i;
+    int count = 0;
+    for (int i = 0; i < n; i++)
+    {
+        if (vector[i] != 0)
+                count++;
+    }
+    printf("count - %d\n", count);
+    data = malloc(count * sizeof(double));
+    if (!data)
+        return MEM_ERR;
+    data_i = malloc(count * sizeof(int));
+    if (!data_i)
+        return MEM_ERR;
+    count = 0;
+    for (int i = 0; i < n; i++)
+    {
+        if (vector[i] != 0)
+        {
+            data[count] = vector[i];
+            data_i[count] = i;
+            count++;
+        }
+    }
+    printf("AN: ");
+    print_array(data, count);
+    printf("AI: ");
+    print_int_array(data_i, count);
+    return OK;
+}

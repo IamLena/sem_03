@@ -303,6 +303,12 @@ void print_array(double *vector, int m)
         printf("%lf ", vector[i]);
 }
 
+void print_int_array(int *vector, int m)
+{
+    for (int i = 0; i < m; i++)
+        printf("%d ", vector[i]);
+}
+
 int get_mode(char *valid, char *key)
 {
     printf("%s ", key);

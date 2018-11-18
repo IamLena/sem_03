@@ -2,6 +2,7 @@
 #include "get.h"
 #include "io.h"
 #include "mult.h"
+#include "matrix_mem.h"
 
 int main(void)
 {
@@ -15,16 +16,21 @@ int main(void)
     rc = get_matrix(&matrix, &n, &m);
     if (rc == OK)
     {
-        print_matrix(matrix, n, m);
+        //print_matrix(matrix, n, m);
+        printf("\n----SPARSE----\n");
+        make_sparse_matrix(matrix, n, m);
         rc = get_vector(&vector, m);
         if (rc == OK)
         {
             print_array(vector, m);
+            printf("\n----SPARSE----\n");
+            make_sparse_vector(vector,m);
             printf("\n");
             t1 = tick();
             multiply_usual(matrix, vector, n, m, &result);
             t2 = tick();
             printf("time - %lu\n", t2 - t1);
+
         }
     }
     if (rc == IO_ERR)
