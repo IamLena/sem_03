@@ -65,12 +65,12 @@ double **read_matrix_coord(FILE *f, int *n, int *m, int *rc)
             if (new_matrix)
             {
                 int i, j;
-                float el;
+                double el;
                 int line = 0;
                 int i_prev = 0, j_prev = 0;
                 while (line < elements)
                 {
-                    if (fscanf(f, "%d %d %f", &i, &j, &el) == 3)
+                    if (fscanf(f, "%d %d %lf", &i, &j, &el) == 3)
                     {
                         float eps = 0.00000000001;
                         if (i <= *n && j <= *m && i > 0 && j > 0 && fabs(el - 0) > eps)
@@ -154,6 +154,104 @@ int read_matrix_lines(FILE *f, double ***pmtr, int *pn, int *pm)
             *pmtr = tmp;
         else
             free_matrix(tmp, *pn);
+    }
+    else
+        rc = CONT_ERR;
+    return rc;
+}
+
+double *read_vector_coord(FILE *f, int *n, int *rc)
+{
+    if (!f)
+        printf("file\n");
+    assert(f != NULL && n != NULL);
+    *rc = OK;
+    double *new_vector = NULL;
+
+    int elements;
+    if (fscanf(f, "%d %d", n, &elements) == 2)
+    {
+        printf("size - %d; nonzero - %d\n", *n, elements);
+        if (*n > 0 && elements > 0 && elements <= *n)
+        {
+            new_vector = calloc(*n, sizeof(double));
+            if (new_vector)
+            {
+                int i;
+                double el;
+                int line = 0;
+                while (line < elements)
+                {
+                    if (fscanf(f, "%d %lf", &i, &el) == 2)
+                    {
+                        printf("%d: %lf\n", i, el);
+                        float eps = 0.00000000001;
+                        if (i <= *n && i > 0 && fabs(el - 0) > eps)
+                        {
+                                //i--;
+                                new_vector[i] = el;
+                                line++;
+                        }
+                        else
+                        {
+                            *rc = CONT_ERR;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        *rc = CONT_ERR;
+                        break;
+                    }
+                }
+                if (line != elements)
+                    *rc = CONT_ERR;
+                if (*rc == CONT_ERR)
+                {
+                    free(new_vector);
+                    new_vector = NULL;
+                }
+            }
+            else
+                *rc = MEM_ERR;
+        }
+        else
+            *rc = CONT_ERR;
+    }
+    else
+        *rc = CONT_ERR;
+
+    return new_vector;
+}
+
+// чтение матрицы
+int read_vector_lines(FILE *f, double **pvector, int *pn)
+{
+    assert ((f != NULL) && (pvector != NULL) && (pn != NULL));
+    int rc = OK;
+    if (fscanf(f, "%d", pn) == 1 && *pn > 0)
+    {
+        double *tmp = calloc(*pn, sizeof(double));
+        if (!tmp)
+            rc = MEM_ERR;
+        else
+        {
+            for (int i = 0; i < *pn; i++)
+            {
+                    if (fscanf(f, "%lf", &tmp[i]) != 1)
+                    {
+                        rc = CONT_ERR;
+                        break;
+                    }
+            }
+        }
+        char c;
+        if (fscanf(f, "%c", &c) == 1 && c != '\n')
+            rc = CONT_ERR;
+        if (rc == OK)
+            *pvector = tmp;
+        else
+            free(tmp);
     }
     else
         rc = CONT_ERR;

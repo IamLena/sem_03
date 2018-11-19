@@ -120,10 +120,37 @@ int matrix_mode3(double ***matrix, int *n, int *m)
     return OK;
 }
 
-int vector_mode1(double **vector, int n)
+int vector_mode1(double **vector, int *n)
 {
     printf("file\n");
-    return 0;
+    FILE *f_vector = NULL;
+    if (get_file(&f_vector) == FILE_ERR)
+    {
+        return FILE_ERR;
+    }
+    int code = get_mode("123", "-------------------\n1-coordinates\n2-by elements\n3-exit\nInput the mode or 3 for exit: ");
+    int ok;
+    if (code == 1)
+    {
+        printf("coordinats\n");
+        *vector = read_vector_coord(f_vector, n, &ok);
+        if (ok == OK)
+                print_array(*vector, *n);
+        fclose(f_vector);
+        return ok;
+    }
+    if (code == 2)
+    {
+        printf("usual matrix\n");
+        ok = read_vector_lines(f_vector, vector, n);
+        if (ok == OK)
+                print_array(*vector, *n);
+        fclose(f_vector);
+        return ok;
+    }
+
+    fclose(f_vector);
+    return IO_ERR;
 }
 
 int vector_mode2(double **vector, int n)
@@ -203,16 +230,16 @@ int get_matrix(double ***matrix, int *n, int *m)
     return get_matrix(matrix, n, m);
 }
 
-int get_vector(double **vector, int n)
+int get_vector(double **vector, int *n)
 {
     int mode = get_mode("1234", "--------------------------\nInput or create vector\n1-file\n2-manual\n3-auto(%)\n"
                                "4-exit\nInput the mode of creation or put 4 for exit: ");
     if (mode == 1)
         return vector_mode1(vector, n);
     if (mode == 2)
-        return vector_mode2(vector, n);
+        return vector_mode2(vector, *n);
     if (mode == 3)
-        return vector_mode3(vector, n);
+        return vector_mode3(vector, *n);
     if (mode == 4)
         return IO_ERR;
     return get_vector(vector, n);

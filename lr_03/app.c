@@ -10,26 +10,32 @@ int main(void)
     double **matrix;
     int n, m;
     double *vector;
-    double *result;
-    unsigned long t1, t2;
+//    double *result;
+//    unsigned long t1, t2;
 
     rc = get_matrix(&matrix, &n, &m);
     if (rc == OK)
     {
         //print_matrix(matrix, n, m);
         printf("\n----SPARSE----\n");
-        make_sparse_matrix(matrix, n, m);
-        rc = get_vector(&vector, m);
+        rc = get_vector(&vector, &m);
         if (rc == OK)
         {
-            print_array(vector, m);
+//            print_array(vector, m);
+//            t1 = tick();
+//            multiply_usual(matrix, vector, n, m, &result);
+//            t2 = tick();
+//            printf("time - %lu\n", t2 - t1);
+
             printf("\n----SPARSE----\n");
-            make_sparse_vector(vector,m);
-            printf("\n");
-            t1 = tick();
-            multiply_usual(matrix, vector, n, m, &result);
-            t2 = tick();
-            printf("time - %lu\n", t2 - t1);
+            s_matrix a;
+            s_vector b;
+            make_sparse_vector(vector, m, &b);
+            make_sparse_matrix(matrix, n, m, &a);
+            mult_spare_arrays(b, b);
+            //s_vector result = mult_sparse(a, b);
+            printf("\nMULT\n");
+            mult_sparse(a, b);
 
         }
     }

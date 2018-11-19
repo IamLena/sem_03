@@ -42,10 +42,10 @@ int memory_size(double **mtr, int n, int m)
     return (n * sizeof(double*) + n * m * sizeof(double));
 }
 
-int make_sparse_matrix(double **mtr, int n, int m)
+int make_sparse_matrix(double **mtr, int n, int m, s_matrix *matrix)
 {
     print_matrix(mtr, n, m);
-    printf("-------------\n");
+    printf("\n-------------\n");
     double *data;
     int *data_j, *data_i;
     int count = 0;
@@ -86,13 +86,21 @@ int make_sparse_matrix(double **mtr, int n, int m)
     print_int_array(data_j, count);
     printf("AI: ");
     print_int_array(data_i, n + 1);
+    matrix->an = data;
+    matrix->aj = data_j;
+    matrix->ai = data_i;
+    matrix->n = n;
+    matrix->m = m;
+    matrix->k = n + 1;
+    matrix->h = count;
+    printf("\n");
     return OK;
 }
 
-int make_sparse_vector(double *vector, int n)
+int make_sparse_vector(double *vector, int n, s_vector *b)
 {
+    printf("\n-------------\n");
     print_array(vector, n);
-    printf("-------------\n");
     double *data;
     int *data_i;
     int count = 0;
@@ -122,5 +130,10 @@ int make_sparse_vector(double *vector, int n)
     print_array(data, count);
     printf("AI: ");
     print_int_array(data_i, count);
+    b->bn = data;
+    b->bi = data_i;
+    b->n = n;
+    b->k = count;
+    printf("\n");
     return OK;
 }

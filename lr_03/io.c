@@ -301,12 +301,14 @@ void print_array(double *vector, int m)
 {
     for (int i = 0; i < m; i++)
         printf("%lf ", vector[i]);
+    printf("\n");
 }
 
 void print_int_array(int *vector, int m)
 {
     for (int i = 0; i < m; i++)
         printf("%d ", vector[i]);
+    printf("\n");
 }
 
 int get_mode(char *valid, char *key)
