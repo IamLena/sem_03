@@ -13,11 +13,14 @@ file.o: file.c *.h
 mult.o: mult.c *.h
 	$(CC) $(PARAMS) -c mult.c
 
+get.o: mult.c *.h
+	$(CC) $(PARAMS) -c get.c
+
 matrix_mem.o: matrix_mem.c *.h
 	$(CC) $(PARAMS) -c matrix_mem.c
 
-app.exe: app.o io.o mult.o file.o matrix_mem.o
-	$(CC) -o app.exe app.o io.o mult.o file.o matrix_mem.o
+app.exe: app.o io.o mult.o file.o matrix_mem.o get.o
+	$(CC) -o app.exe app.o io.o mult.o file.o matrix_mem.o get.o
 
 clean:
 	rm *.exe *.o
