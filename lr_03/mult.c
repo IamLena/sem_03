@@ -21,7 +21,7 @@ void multiply_usual(double **mtr, double *column, int n, int m, double **res)
     assert(n > 0 && m > 0 && mtr != NULL && column != NULL && res != NULL);
     double *tmp = calloc(n, sizeof(double));
     for (int i = 0; i < n; i++)
-        res[i] = 0;
+        tmp[i] = 0;
     for (int i = 0; i < n; i ++)
     {
         for (int j = 0; j < m; j ++)
