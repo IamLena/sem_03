@@ -44,8 +44,6 @@ int memory_size(double **mtr, int n, int m)
 
 int make_sparse_matrix(double **mtr, int n, int m, s_matrix *matrix)
 {
-    print_matrix(mtr, n, m);
-    printf("\n-------------\n");
     double *data;
     int *data_j, *data_i;
     int count = 0;
@@ -57,7 +55,6 @@ int make_sparse_matrix(double **mtr, int n, int m, s_matrix *matrix)
                 count++;
         }
     }
-    printf("count - %d\n", count);
     data = malloc(count * sizeof(double));
     if (!data)
         return MEM_ERR;
@@ -80,12 +77,6 @@ int make_sparse_matrix(double **mtr, int n, int m, s_matrix *matrix)
             }
     }
     data_i[n] = count;
-    printf("AN: ");
-    print_array(data, count);
-    printf("AJ: ");
-    print_int_array(data_j, count);
-    printf("AI: ");
-    print_int_array(data_i, n + 1);
     matrix->an = data;
     matrix->aj = data_j;
     matrix->ai = data_i;
@@ -93,14 +84,11 @@ int make_sparse_matrix(double **mtr, int n, int m, s_matrix *matrix)
     matrix->m = m;
     matrix->k = n + 1;
     matrix->h = count;
-    printf("\n");
     return OK;
 }
 
 int make_sparse_vector(double *vector, int n, s_vector *b)
 {
-    printf("\n-------------\n");
-    print_array(vector, n);
     double *data;
     int *data_i;
     int count = 0;
@@ -109,7 +97,6 @@ int make_sparse_vector(double *vector, int n, s_vector *b)
         if (vector[i] != 0)
                 count++;
     }
-    printf("count - %d\n", count);
     data = malloc(count * sizeof(double));
     if (!data)
         return MEM_ERR;
@@ -126,14 +113,9 @@ int make_sparse_vector(double *vector, int n, s_vector *b)
             count++;
         }
     }
-    printf("AN: ");
-    print_array(data, count);
-    printf("AI: ");
-    print_int_array(data_i, count);
     b->bn = data;
     b->bi = data_i;
     b->n = n;
     b->k = count;
-    printf("\n");
     return OK;
 }

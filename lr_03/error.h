@@ -10,6 +10,7 @@
 #include <time.h>
 
 #define OK 0
+#define EXIT 10
 #define IO_ERR 1
 #define MEM_ERR 2
 #define FILE_ERR 3
@@ -17,21 +18,21 @@
 
 struct sparse_matrix
 {
-    int n;
-    int m;
-    double *an;
-    int *aj;
-    int h;
-    int *ai;
-    int k;
+    int n;//количество строк матрицы
+    int m;//количество столбцов матрицы
+    double *an;//масси элементов
+    int *aj;//массив индексов столбцов
+    int h;//количество ненулевых элементов
+    int *ai;//массив начал строк
+    int k;//длина массива ai
 };
 
 struct sparse_vector
 {
-    int k;
-    int n;
-    double *bn;
-    int *bi;
+    int k;//количество ненулевых элементов
+    int n;//длина столбца
+    double *bn;//массив ненулевых элементов
+    int *bi;//массив индексов
 };
 
 typedef struct sparse_vector s_vector;

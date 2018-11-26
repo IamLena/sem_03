@@ -50,9 +50,7 @@ int get_file(FILE **f)
  */
 double **read_matrix_coord(FILE *f, int *n, int *m, int *rc)
 {
-    if (!f)
-        printf("file\n");
-    assert((n != NULL) && (m != NULL));
+    assert(n && m && f);
     *rc = OK;
     double **new_matrix = NULL;
 
@@ -67,7 +65,6 @@ double **read_matrix_coord(FILE *f, int *n, int *m, int *rc)
                 int i, j;
                 double el;
                 int line = 0;
-                int i_prev = 0, j_prev = 0;
                 while (line < elements)
                 {
                     if (fscanf(f, "%d %d %lf", &i, &j, &el) == 3)
@@ -75,21 +72,10 @@ double **read_matrix_coord(FILE *f, int *n, int *m, int *rc)
                         float eps = 0.00000000001;
                         if (i <= *n && j <= *m && i > 0 && j > 0 && fabs(el - 0) > eps)
                         {
-                            if (!(i == i_prev && j == j_prev))
-                            {
-                                //ошибка если повторяющиес не подряд
-                                i_prev = i;
-                                j_prev = j;
                                 i--;
                                 j--;
                                 new_matrix[i][j] = el;
                                 line++;
-                            }
-                            else
-                            {
-                                *rc = CONT_ERR;
-                                break;
-                            }
                         }
                         else
                         {
@@ -162,16 +148,13 @@ int read_matrix_lines(FILE *f, double ***pmtr, int *pn, int *pm)
 
 double *read_vector_coord(FILE *f, int *n, int *rc)
 {
-    if (!f)
-        printf("file\n");
-    assert(f != NULL && n != NULL);
+    assert(f != NULL && n != NULL && rc != NULL);
     *rc = OK;
     double *new_vector = NULL;
 
     int elements;
     if (fscanf(f, "%d %d", n, &elements) == 2)
     {
-        printf("size - %d; nonzero - %d\n", *n, elements);
         if (*n > 0 && elements > 0 && elements <= *n)
         {
             new_vector = calloc(*n, sizeof(double));
@@ -184,11 +167,9 @@ double *read_vector_coord(FILE *f, int *n, int *rc)
                 {
                     if (fscanf(f, "%d %lf", &i, &el) == 2)
                     {
-                        printf("%d: %lf\n", i, el);
                         float eps = 0.00000000001;
                         if (i <= *n && i > 0 && fabs(el - 0) > eps)
                         {
-                                //i--;
                                 new_vector[i] = el;
                                 line++;
                         }

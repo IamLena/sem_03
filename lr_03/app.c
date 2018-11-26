@@ -11,36 +11,44 @@ int main(void)
     int n, m;
     double *vector;
     double *result;
-    unsigned long t1, t2;
+    unsigned long t1, t2, time1, time2;
 
     rc = get_matrix(&matrix, &n, &m);
     if (rc == OK)
     {
-        if (n < 10 && m < 10)
+        if (n <= 10 && m <= 10)
             print_matrix(matrix, n, m);
         rc = get_vector(&vector, &m);
         if (rc == OK)
         {
-            if (m < 10)
+            if (m <= 10)
                 print_array(vector, m);
 
             t1 = tick();
             multiply_usual(matrix, vector, n, m, &result);
             t2 = tick();
-            printf("usual multiply time - %lu\n", t2 - t1);
-            print_array(vector, m);
+            time1 = t2 - t1;
+
             s_matrix a;
             s_vector b;
-            print_matrix(matrix, n, m);
-            print_array(vector, m);
-            //s_vector res;
+            s_vector res;
             make_sparse_vector(vector, m, &b);
             make_sparse_matrix(matrix, n, m, &a);
-            printf("mult\n");
             t1 = tick();
-            mult_sparse(a, b);
+            res = mult_sparse(a, b);
             t2 = tick();
-            printf("sparse multiply time - %lu\n", t2 - t1);
+            time2 = t2 - t1;
+
+            printf("RESULT\n");
+            print_array(result, m);
+            printf("sparse\n");
+            print_array(res.bn, res.k);
+            print_int_array(res.bi, res.k);
+
+            printf("________________TIME_________________\n");
+            printf("|usual multiply time  - %13lu|\n", time1);
+            printf("|sparse multiply time - %13lu|\n", time2);
+            printf("|____________________________________|\n");
         }
     }
     if (rc == IO_ERR)

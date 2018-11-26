@@ -16,20 +16,19 @@ unsigned long tick(void)
 
 void multiply_usual(double **mtr, double *column, int n, int m, double **res)
 {
-    printf("n - %d, m - %d\n", n, m);
-    printf("mult\n");
     assert(n > 0 && m > 0 && mtr != NULL && column != NULL && res != NULL);
     double *tmp = calloc(n, sizeof(double));
-    for (int i = 0; i < n; i++)
-        tmp[i] = 0;
+    if (!tmp)
+    {
+        *res = NULL;
+        return;
+    }
     for (int i = 0; i < n; i ++)
     {
         for (int j = 0; j < m; j ++)
             tmp[i] += mtr[i][j] * column[j];
-        printf("%d - %f\n", i, tmp[i]);
     }
     *res = tmp;
-    print_array(*res, n);
 }
 
 int count_intersection(int *arr1, int *arr2, int m, int n)
@@ -74,9 +73,7 @@ void intersection(int *arr1, int *arr2, int m, int n, int *res, int *res_len)
 size_t find_index( int *a, size_t size, int value )
 {
     size_t index = 0;
-
     while ( index < size && a[index] != value ) ++index;
-
     return ( index == size ? -1 : index );
 }
 
@@ -113,17 +110,14 @@ double mult_spare_arrays(s_vector a, s_vector b)
 //        }
 //    }
 //    printf("res - %f\n", res);
-    printf("intersection\n");
+
+
     int res_len = count_intersection(a.bi, b.bi, a.k, b.k);
     int result[res_len];
     intersection(a.bi, b.bi, a.k, b.k, result, &res_len);
-    print_int_array(result, res_len);
     for (int k = 0; k < res_len; k++)
     {
-        printf("k - %d; ", k);
-        printf("res before - %f; ", res);
         res += a.bn[find_index(a.bi, a.k, result[k])] * b.bn[find_index(b.bi, b.k, result[k])];
-        printf("res after - %f\n", res);
     }
     return res;
 }
@@ -138,7 +132,6 @@ s_vector mult_sparse(s_matrix mtr, s_vector vtr)
         row.k = mtr.ai[i + 1] - mtr.ai[i];
         row.bi = malloc(row.k * sizeof(int));
         row.bn = malloc(row.k * sizeof(int));
-//        for (int k = 0; k < row.k; k++)
         int k = 0;
         for (int j = mtr.ai[i]; j < mtr.ai[i + 1]; j++)
         {
@@ -146,15 +139,10 @@ s_vector mult_sparse(s_matrix mtr, s_vector vtr)
             row.bn[k] = mtr.an[j];
             k++;
         }
-        printf("row %d: ", i);
-        print_array(row.bn, k);
         result[i] = mult_spare_arrays(row, vtr);
-        printf("result[%d] - %f\n", i, result[i]);
         free(row.bi);
         free(row.bn);
     }
-    printf("\nresult: ");
-    print_array(result, mtr.n);
     s_vector sparse_result;
     make_sparse_vector(result, mtr.n, &sparse_result);
     return sparse_result;

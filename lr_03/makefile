@@ -13,7 +13,7 @@ file.o: file.c *.h
 mult.o: mult.c *.h
 	$(CC) $(PARAMS) -c mult.c
 
-get.o: mult.c *.h
+get.o: get.c *.h
 	$(CC) $(PARAMS) -c get.c
 
 matrix_mem.o: matrix_mem.c *.h

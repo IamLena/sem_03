@@ -169,22 +169,18 @@ int input_double(double *num, int n, char *key)
     char buf[n];
     double a = 0, dot = 1;
     int flag = 0;
-    int flag_minus = 0;
     int rc = OK;
     bool yn;
     if (input_string(buf, n, key) != OK)
         return IO_ERR;
     for (int i = 0; buf[i] != '\0'; i++)
     {
-        if (isdigit(buf[i]) || buf[i] == '.' || buf[i] == '-')
+        if (isdigit(buf[i]) || buf[i] == '.' || buf[i] == '-' || buf[i] == '+')
         {
             if (buf[i] == '-')
             {
-                if (flag_minus == 0 && i == 0)
-                {
+                if (i == 0)
                     dot = -1;
-                    flag_minus = 1;
-                }
                 else
                 {
                     printf("Invalid input\n");
@@ -198,6 +194,23 @@ int input_double(double *num, int n, char *key)
                     return rc;
                 }
 
+            }
+            else if (buf[i] == '+')
+            {
+                if (i == 0)
+                    dot = 1;
+                else
+                {
+                    printf("Invalid input\n");
+                    rc = IO_ERR;
+                    while (rc != OK)
+                        rc = input_bool(&yn, "Want to try again? ");
+                    if (yn == true)
+                        rc = input_double(num, n, key);
+                    if (yn == false)
+                        rc = IO_ERR;
+                    return rc;
+                }
             }
             else if (buf[i] == '.')
             {
@@ -223,7 +236,7 @@ int input_double(double *num, int n, char *key)
                 a += buf[i] - '0';
                 if (flag == 1)
                     dot *= 10;
-                if (dot == 100000)
+                if (dot == 10000000)
                 {
                     printf("Invalid input power\n");
                     rc = IO_ERR;
@@ -253,37 +266,6 @@ int input_double(double *num, int n, char *key)
     a /= dot;
     *num = a;
     return rc;
-}
-
-////координатный или в виде матрицы
-int coord_usual()
-{
-    printf("--------------\n1-coordinate\n2-by lines\nChoose the mode: ");
-    char c1 = getchar();
-    if (c1 == '\n' || c1 == EOF)
-    {
-        printf("Invalid input\n");
-
-    }
-    else
-    {
-        char c2 = getchar();
-        if (c2 == '\n')
-        {
-            if (c1 == '1' && c2 == '\n')
-                return 1;
-            else if (c1 == '2' && c2 == '\n')
-                return 2;
-            else
-                printf("Invalid input\n");
-        }
-        else
-        {
-            printf("Invalid Input\n");
-            clean_stdin();
-        }
-    }
-    return -1;
 }
 
 //печать матрицы
