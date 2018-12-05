@@ -10,14 +10,12 @@ char *input_string(void)
     printf("input the string: ");
     while ((c = getchar()) && (c != EOF) && (c != '\n'))
     {
-        printf("%c\n", c);
         if (str_len == mem_len)
         {
             mem_len += ADD_LENGTH;
             tmp = realloc(str, mem_len * sizeof(char));
             if (!tmp)
             {
-                printf("null");
                 if (str)
                     free(str);
                 return NULL;
@@ -40,6 +38,6 @@ char *input_string(void)
     }
     str[str_len++] = '\0';
 
-    puts(str);
+    printf("your input is:\n%s\n", str);
     return str;
 }
