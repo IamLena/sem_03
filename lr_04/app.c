@@ -1,11 +1,4 @@
-#include <assert.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdio.h>
-
-#include "stack.h"
-#include "io.h"
-#include "palindrom.h"
+#include "defines.h"
 
 unsigned long tick(void)
 {
@@ -16,32 +9,27 @@ unsigned long tick(void)
 
 int main(void)
 {
-    int rc;
-    stack_t s;
-    bool is_pal;
     unsigned long t1, t2;
+
+    char *string1 = input_string();
+    char *string2;
+
+    stack_t s;
     s = create();
-    if (!s)
-    {
-        printf("can not make a stack\n");
-        return MEM_ERR;
-    }
-    rc = input(s);
-    if (rc == OVERFLOW)
-        printf("Stack overflow\n");
-    else if (rc == EMPTY)
-        printf("Empty input\n");
+
+    t1 = tick();
+    fill_stack(s, string1);
+    string2 = get_string(s);
+    t2 = tick();
+    if (strcmp(string1, string2) == 0)
+        printf("it is a palindrom\n");
     else
-    {
-        t1 = tick();
-        is_pal = is_palindrom(s);
-        t2 = tick();
-        pop_print(s);
-        //is_pal == 1 ? "true" : "false"
-        printf("%s\n", (is_pal == 1 ? "true" : "false"));
-        printf("time is %lu\n", t2 - t1);
-    }
+        printf("it is not a palindrom\n");
+    printf("time = %lu\n", t2 - t1);
+    pop_print(s);
+
     destroy(s);
-    printf("rc = %d\n", rc);
-    return rc;
+    free(string1);
+    free(string2);
+    return OK;
 }

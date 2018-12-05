@@ -1,0 +1,8 @@
+app.c
+defines.h
+io.c
+io.h
+palindrom.c
+palindrom.h
+stack.c
+stack.h

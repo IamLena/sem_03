@@ -1,19 +1,9 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include <assert.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include "stack.h"
+#include "defines.h"
 
 #define STACK_SIZE 10
-
-#define OK 0
-#define MEM_ERR 1
-
-#define OVERFLOW -1
-#define EMPTY -2
 
 typedef char item_t;
 typedef struct stack_type* stack_t;

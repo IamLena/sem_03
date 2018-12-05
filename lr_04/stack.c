@@ -1,9 +1,4 @@
-#include <assert.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdio.h>
-
-#include "stack.h"
+#include "defines.h"
 
 stack_t create(void)
 {

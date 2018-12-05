@@ -1,9 +1,10 @@
 #ifndef PALINDROM_H
 #define PALINDROM_H
-#include <stdbool.h>
-#include "stack.h"
-#include "palindrom.h"
 
-bool is_palindrom(stack_t s);
+#include "defines.h"
+
+int fill_stack(stack_t s, char *str);
+
+char *get_string(stack_t s);
 
 #endif // PALINDROM_H
