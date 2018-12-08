@@ -1,5 +1,8 @@
-app.exe: app.o io.o stack.o palindrom.o
-	gcc -o app.exe app.o io.o stack.o palindrom.o
+app.exe: app.o io.o stack.o stack_list.o palindrom.o
+	gcc -o app.exe app.o io.o stack.o stack_list.o palindrom.o
+
+stack_list.o: stack_list.c *.h
+	gcc -std=c99 -Wall -Werror -pedantic -g3 -ggdb -c stack_list.c
 
 app.o: app.c *.h
 	gcc -std=c99 -Wall -Werror -pedantic -g3 -ggdb -c app.c

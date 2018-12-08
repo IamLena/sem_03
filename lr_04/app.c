@@ -57,6 +57,39 @@ int main(void)
         printf("Stack overflow. Try a shorter input.");
 
     destroy(s);
+
+    stack_list_t s2 = create2();
+    t1 = tick();
+    rc = fill_stack2(s2, string1);
+    if (rc == OK)
+    {
+        string2 = get_string2(s2);
+        if (string2)
+        {
+            t2 = tick();
+            if (strcmp(string1, string2) == 0)
+                printf("it is a palindrom\n");
+            else
+                printf("it is not a palindrom\n");
+            printf("time = %lu\n", t2 - t1);
+            pop_print2(s2);
+            free(string2);
+        }
+        else
+        {
+            printf("Memory error\n");
+            rc = MEM_ERR;
+        }
+
+    }
+    else if (rc == EMPTY)
+        printf("Empty input. Can not proceed.");
+    else
+        printf("Stack overflow. Try a shorter input.");
+
+    destroy2(s2);
+
     free(string1);
-    return OK;
+
+    return rc;
 }

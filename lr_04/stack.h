@@ -11,7 +11,6 @@ typedef struct stack_type* stack_t;
 struct stack_type
 {
     item_t content[STACK_SIZE];
-    //item_t top;
     int top;
 };
 

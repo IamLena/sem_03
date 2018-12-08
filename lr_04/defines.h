@@ -9,6 +9,7 @@
 
 #include "io.h"
 #include "stack.h"
+#include "stack_list.h"
 #include "palindrom.h"
 #include "defines.h"
 

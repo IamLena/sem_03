@@ -38,6 +38,6 @@ char *input_string(void)
     }
     str[str_len++] = '\0';
 
-    printf("your input is:\n%s\n", str);
+    printf("your input is:\n%s\n\n", str);
     return str;
 }
