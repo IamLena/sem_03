@@ -54,7 +54,7 @@ int pop_arr(line_arr *queue, order *element)
 }
 void print_arr(line_arr queue)
 {
-    /*for (int i = 0; i < queue.len; i++)
+    /* for (int i = 0; i < queue.len; i++)
         print_order(queue.line[i]);
         //printf("%lf ", queue.line[i]);
     printf("\n");*/
@@ -110,7 +110,10 @@ int push_list(line_list **queue, order element)
             (*queue)->pout = new_el;
         }
         else
+        {
             (*queue)->pin->next = new_el;
+            (*queue)->pin = (*queue)->pin->next;
+        }
         (*queue)->len++;
     }
     return MEM_ERR;

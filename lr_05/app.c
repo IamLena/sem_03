@@ -27,7 +27,7 @@ int main(void)
     //list
     {
         printf("\nlist\n");
-        line_list *queue2 = create_list();
+        /*line_list *queue2 = create_list();
         order element;
         push_list(&queue2, element);
         printf("line pusehed\n");
@@ -36,7 +36,8 @@ int main(void)
         printf("line poped\n");
         print_list(*queue2);
         printf("an element\n");
-        print_order(element);
+        print_order(element);*/
+        generate_line_list();
     }
 
     return 0;

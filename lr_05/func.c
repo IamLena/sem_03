@@ -31,11 +31,28 @@ line_arr *generate_line_arr(void)
 
     print_arr(*queue);
     return queue;
-
 }
 
 
-line_list *generate_line_list(void);
+line_list *generate_line_list(void)
+{
+    double time = 0;
+    line_list *queue = create_list();
+    order new_order;
+
+    while (queue->len != MAX_LEN)
+    {
+        new_order.loop = 0;
+        new_order.time_interval = randfrom(0, 6);
+        time += new_order.time_interval;
+        new_order.time_processing = randfrom(0, 1);
+        new_order.time_arrive = time;
+        push_list(&queue, new_order);
+    }
+
+    print_list(*queue);
+    return queue;
+}
 
 void OA_arr(line_arr *queue);
 void  OA_list(line_list *queue);
