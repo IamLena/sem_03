@@ -44,18 +44,19 @@ struct line_list_t
 };
 
 //array_funcs
-line_arr *create_arr();
-int add_el_arr(line_arr *queue, order element);
-int del_el_arr(line_arr *queue, order *element);
+line_arr *create_arr(void);
+int push_arr(line_arr **queue, order element);
+int pop_arr(line_arr *queue, order *element);
 void print_arr(line_arr queue);
 void destroy_arr(line_arr *queue);
 
 //list_funcs
-line_list *create_list();
-int add_el_list(line_list *queue, order element);
-int del_el_list(line_list *queue, order *element);
+line_list *create_list(void);
+int push_list(line_list **queue, order element);
+int pop_list(line_list *queue, order *element);
 void print_list(line_list queue);
 void destroy_list(line_list *queue);
 
+void print_order(order el);
 
 #endif // QUEUE_H
