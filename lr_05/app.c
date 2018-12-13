@@ -40,6 +40,7 @@ int main(void)
         insert_sorted_array(queue, element);*/
         print_arr(*queue);
         OA_arr(queue);
+        destroy_arr(queue);
 
     }
 
