@@ -26,6 +26,7 @@ line_arr *create_arr(void)
 }
 int push_arr(line_arr **queue, order element)
 {
+    //print_order(element);
     if (*queue == NULL)
         *queue = create_arr();
     if (*queue == NULL)
@@ -54,10 +55,10 @@ int pop_arr(line_arr *queue, order *element)
 }
 void print_arr(line_arr queue)
 {
-    /* for (int i = 0; i < queue.len; i++)
+    for (int i = 0; i < MAX_LEN; i++)
         print_order(queue.line[i]);
         //printf("%lf ", queue.line[i]);
-    printf("\n");*/
+    printf("\n");
 
     for (int i = 0; i < queue.len; i++)
     {

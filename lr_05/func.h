@@ -3,6 +3,12 @@
 
 #include "queue.h"
 
+
+order *next_pointer(line_arr *queue, order *pointer);
+
+order *prev_pointer(line_arr *queue, order *pointer);
+int insert_sorted_array(line_arr *queue, order element);
+
 line_arr *generate_line_arr(void);
 line_list *generate_line_list(void);
 
