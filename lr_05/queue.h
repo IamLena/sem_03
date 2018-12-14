@@ -37,7 +37,7 @@ struct node_t
 //list
 struct line_list_t
 {
-    node_p head;
+    //node_p head;
     node_p pin;
     node_p pout;
     int len;

@@ -28,6 +28,8 @@ order *prev_pointer(line_arr *queue, order *pointer)
     return pointer - 1;
 }
 
+//исправить в принципе реализвацию.
+// так долго, много операций.
 int insert_sorted_array(line_arr *queue, order element)
 {
     if (queue->len == MAX_LEN)
@@ -49,10 +51,35 @@ int insert_sorted_array(line_arr *queue, order element)
     return OK;
 }
 
-//int insert_sorted_list()
-//{
+int insert_sorted_list(line_list **queue, order element)
+{
+    if ((*queue)->len == MAX_LEN)
+        return FULL;
+    node_p new = malloc(sizeof(struct node_t));
+    if (!new)
+        return MEM_ERR;
+    new->value = element;
 
-//}
+    node_p run = (*queue)->pout;
+    node_p prev;
+    while (run && (run->value.time_arrive < element.time_arrive))
+    {
+        prev = run;
+        run = run->next;
+    }
+    if (run == (*queue)->pout)
+    {
+        (*queue)->pout = new;
+        new->next = run;
+    }
+    else
+    {
+        prev->next = new;
+        new->next = run;
+    }
+    (*queue)->len += 1;
+    return OK;
+}
 
 line_arr *generate_line_arr(void)
 {
@@ -150,4 +177,61 @@ void OA_arr(line_arr *queue)
     printf("input orders = %d\n", input);
 }
 
-void  OA_list(line_list *queue);
+void  OA_list(line_list **queue)
+{
+    double time = 0;
+    double time_prostoy = 0;
+
+    int order_out = 0;
+    int input = 0;
+    order el;
+
+    while(order_out != N)
+    {
+//        if (order_out == EVERY)
+//        {
+//            printf("line:\n");
+//            print_arr(*queue);
+//            printf("time of working = %lf\n", time);
+//            printf("time prostoy = %lf\n", time_prostoy);
+//        }
+        if (pop_list(*queue, &el) != OK)
+        {
+            printf("empty\n");
+            return;
+        }
+//        printf("popped\n");
+//        print_list(*queue);
+        if (el.time_arrive - time > 0)
+            time_prostoy += el.time_arrive - time;
+
+        if (el.loop == 0)
+            input++;
+
+        time += el.time_interval;
+        time += el.time_processing;
+        el.loop++;
+        el.time_arrive = time;
+        el.time_interval = 0;
+
+        if (el.loop == 5)
+            order_out++;
+        else
+        {
+            printf("pushing this one:\n");
+            print_order(el);
+            insert_sorted_list(queue, el);
+        }
+        printf("__________________\n");
+        print_list(**queue);
+        printf("time of working = %lf\n", time);
+        printf("time prostoy = %lf\n", time_prostoy);
+        printf("input orders = %d\n", input);
+        printf("out = %d\n", order_out);
+    }
+
+    printf("__________RESULT___________\n");
+    printf("time of working = %lf\n", time);
+    printf("time prostoy = %lf\n", time_prostoy);
+    printf("input orders = %d\n", input);
+}

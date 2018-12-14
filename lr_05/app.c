@@ -57,7 +57,10 @@ int main(void)
         print_list(*queue2);
         printf("an element\n");
         print_order(element);*/
-        //generate_line_list();
+        line_list *queue = generate_line_list();
+        print_list(*queue);
+        OA_list(&queue);
+        destroy_list(queue);
     }
 
     return 0;

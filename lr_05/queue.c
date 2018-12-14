@@ -85,7 +85,7 @@ line_list *create_list(void)
     if (new_queue)
     {
         new_queue->len = 0;
-        new_queue->head = NULL;
+        //new_queue->head = NULL;
         new_queue->pin = NULL;
         new_queue->pout = NULL;
     }
@@ -106,7 +106,7 @@ int push_list(line_list **queue, order element)
         new_el->value = element;
         if ((*queue)->pin == NULL)
         {
-            (*queue)->head = new_el;
+            //(*queue)->head = new_el;
             (*queue)->pin = new_el;
             (*queue)->pout = new_el;
         }
@@ -144,13 +144,13 @@ void print_list(line_list queue)
 }
 void destroy_list(line_list *queue)
 {
-    while(queue->head)
+    while(queue->pout)
     {
-        node_p next = queue->head->next;
-        free(queue->head);
-        queue->head = next;
+        node_p next = queue->pout->next;
+        free(queue->pout);
+        queue->pout = next;
     }
-    queue->head = NULL;
+    //queue->head = NULL;
     queue->pin = NULL;
     queue->pout = NULL;
     queue->len = 0;
