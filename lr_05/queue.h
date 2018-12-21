@@ -64,4 +64,7 @@ void destroy_list(line_list *queue);
 
 void print_order(order el);
 
+void print_loops_list(line_list queue, double time);
+void print_loops_arr(line_arr queue, double time);
+
 #endif // QUEUE_H

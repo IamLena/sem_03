@@ -31,6 +31,8 @@ int main(void)
         t_processing1 = 0;
         t_processing2 = 1;
     }
+//    t_interval1 = t_interval2 = 3;
+//    t_processing1 = t_processing2 = 0.5;
     printf("input result: t1 = (%d, %d); t2 = (%d, %d)\n", t_interval1, t_interval2, t_processing1, t_processing2);
 
     //array
@@ -40,13 +42,13 @@ int main(void)
         if (queue->len <= 15)
         {
             printf("generated\n");
-            //print_arr(*queue);
+            print_arr(*queue);
         }
         OA_arr(queue);
         destroy_arr(queue);
     }
 
-    //list
+    /*//list
     {
         printf("\n--------------------LIST---------------\n\n");
         line_list *queue = generate_line_list(t_interval1, t_interval2, t_processing1, t_processing2);
@@ -57,6 +59,6 @@ int main(void)
         }
         OA_list(&queue);
         destroy_list(queue);
-    }
+    }*/
     return 0;
 }

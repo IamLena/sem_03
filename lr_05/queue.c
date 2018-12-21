@@ -70,6 +70,54 @@ void print_arr(line_arr queue)
     }
     printf("\n----------------------------\n");
 }
+
+void print_loops_arr(line_arr queue, double time)
+{
+    int count = 0;
+    int count_zeros = 0;
+    float sum = 0;
+    float sum_todo = 0;
+
+    int count_ones = 0;
+    int count_twos = 0;
+    int count_threes = 0;
+    int count_fours = 0;
+
+    while (queue.pout->time_arrive <= time)
+    //while(queue.pout->time_arrive <= time && queue.pout->loop < 4)
+    {
+
+        sum_todo += ((5 - queue.pout->loop) * 0.5);
+         if (queue.pout->loop == 0)
+             count_zeros += 1;
+         else if (queue.pout->loop == 1)
+             count_ones += 1;
+         else if (queue.pout->loop == 2)
+             count_twos += 1;
+         else if (queue.pout->loop == 3)
+             count_threes += 1;
+         else if (queue.pout->loop == 4)
+             count_fours += 1;
+         sum += queue.pout->loop * 0.5;
+         count++;
+         //printf("%d ", queue.pout->loop);
+
+        queue.pout++;
+//        if (queue.pout == queue.line + MAX_LEN)
+//            queue.pout = queue.line;
+    }
+    printf(":%d", count);
+    printf("| %d ", count_zeros);
+    printf("| %d ", count_ones);
+    printf("| %d ", count_twos);
+    printf("| %d ", count_threes);
+    printf("| %d ", count_fours);
+    printf("| %.1f ", sum);
+    printf("| %.1f ", sum_todo);
+    printf("| %.1f ", sum_todo / sum);
+    printf("\n");
+}
+
 void destroy_arr(line_arr *queue)
 {
     queue->len = 0;
@@ -142,6 +190,17 @@ void print_list(line_list queue)
     }
     printf("\n_______________________\n");
 }
+
+void print_loops_list(line_list queue, double time)
+{
+    while (queue.pout->value.time_arrive <= time)
+    {
+        printf ("%d ", queue.pout->value.loop);
+        queue.pout = queue.pout->next;
+    }
+    printf("\n");
+}
+
 void destroy_list(line_list *queue)
 {
     while(queue->pout)

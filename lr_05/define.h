@@ -1,8 +1,8 @@
 #ifndef DEFINE_H
 #define DEFINE_H
 
-#define MAX_LEN 15
-#define N 3
+#define MAX_LEN 20000
+#define N 1000
 #define EVERY 1
 
 #define OK 0
