@@ -227,6 +227,7 @@ void OA_arr(line_arr *queue)
     printf("|input orders    = %-8d\t|\n", input);
     printf("|output orders   = %-8d\t|\n", order_out);
     printf("|actions         = %-8d\t|\n", counter);
+    printf("|time / average  = %-8f\t|\n", (time / 3.0));
     printf("|_______________________________|\n");
 }
 
@@ -272,10 +273,10 @@ void  OA_list(line_list **queue)
         counter++;
         if (counter != 0 && counter % EVERY == 0)
         {
-            //print_list(**queue);
             printf("%d orders are processed\n", counter);
             printf("line length = %d\n", cur_len);
             printf("average line length = %f\n", sum_len / (double)counter);
+            printf("_____________________________\n");
         }
     }
 
@@ -286,6 +287,7 @@ void  OA_list(line_list **queue)
     printf("|input orders    = %-8d\t|\n", input);
     printf("|output orders   = %-8d\t|\n", order_out);
     printf("|actions         = %-8d\t|\n", counter);
+    printf("|time / average  = %-8f\t|\n", (time / 3.0));
     printf("|_______________________________|\n");
 }
 

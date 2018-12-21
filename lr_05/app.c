@@ -40,7 +40,7 @@ int main(void)
         if (queue->len <= 15)
         {
             printf("generated\n");
-            print_arr(*queue);
+            //print_arr(*queue);
         }
         OA_arr(queue);
         destroy_arr(queue);
@@ -53,7 +53,7 @@ int main(void)
         if (queue->len <= 15)
         {
             printf("generated\n");
-            print_list(*queue);
+            //print_list(*queue);
         }
         OA_list(&queue);
         destroy_list(queue);

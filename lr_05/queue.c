@@ -140,7 +140,7 @@ void print_list(line_list queue)
         //printf("%lf ", queue.pout->value);
         queue.pout = queue.pout->next;
     }
-    printf("\n");
+    printf("\n_______________________\n");
 }
 void destroy_list(line_list *queue)
 {
