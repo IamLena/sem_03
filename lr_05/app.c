@@ -48,7 +48,7 @@ int main(void)
         destroy_arr(queue);
     }
 
-    /*//list
+    //list
     {
         printf("\n--------------------LIST---------------\n\n");
         line_list *queue = generate_line_list(t_interval1, t_interval2, t_processing1, t_processing2);
@@ -59,6 +59,6 @@ int main(void)
         }
         OA_list(&queue);
         destroy_list(queue);
-    }*/
+    }
     return 0;
 }

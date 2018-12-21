@@ -100,7 +100,7 @@ void print_loops_arr(line_arr queue, double time)
              count_fours += 1;
          sum += queue.pout->loop * 0.5;
          count++;
-         //printf("%d ", queue.pout->loop);
+         printf("%d ", queue.pout->loop);
 
         queue.pout++;
 //        if (queue.pout == queue.line + MAX_LEN)

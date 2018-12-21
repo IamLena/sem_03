@@ -3,7 +3,7 @@
 
 #define MAX_LEN 20000
 #define N 1000
-#define EVERY 1
+#define EVERY 1000
 
 #define OK 0
 #define MEM_ERR 1

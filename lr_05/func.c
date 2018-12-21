@@ -123,10 +123,10 @@ line_arr *generate_line_arr(int t1_ot, int t1_do, int t2_ot, int t2_do)
     {
         new_order.loop = 0;
         new_order.time_interval = randfrom(t1_ot, t1_do);
-        new_order.time_interval = 3;
+        //new_order.time_interval = 3;
         time += new_order.time_interval;
         new_order.time_processing = randfrom(t2_ot, t2_do);
-        new_order.time_processing = 0.5;
+        //new_order.time_processing = 0.5;
         new_order.time_arrive = time;
         push_arr(&queue, new_order);
         if (new_order.time_arrive > 19360 && new_order.time_arrive < 19370)
@@ -298,6 +298,13 @@ void  OA_list(line_list **queue)
         }
     }
 
+    while ((*queue)->pout->value.time_arrive <= time)
+    {
+        if ((*queue)->pout->value.loop == 0)
+            input++;
+        (*queue)->pout = (*queue)->pout->next;
+    }
+
     printf("\n__________RESULTS_______________\n");
     printf("|                               |\n");
     printf("|time of working = %lf\t|\n", time);
@@ -305,7 +312,6 @@ void  OA_list(line_list **queue)
     printf("|input orders    = %-8d\t|\n", input);
     printf("|output orders   = %-8d\t|\n", order_out);
     printf("|actions         = %-8d\t|\n", counter);
-    printf("|time / average  = %-8f\t|\n", (time / 3.0));
     printf("|_______________________________|\n");
 }
 
