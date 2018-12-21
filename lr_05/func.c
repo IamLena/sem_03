@@ -83,6 +83,7 @@ int insert_sorted_array2(line_arr *queue, order element)
 
 int insert_sorted_list(line_list **queue, order element)
 {
+    int current_length = 1;
     if ((*queue)->len == MAX_LEN)
         return FULL;
     node_p new = malloc(sizeof(struct node_t));
@@ -94,6 +95,7 @@ int insert_sorted_list(line_list **queue, order element)
     node_p prev;
     while (run && (run->value.time_arrive < element.time_arrive))
     {
+        current_length++;
         prev = run;
         run = run->next;
     }
@@ -108,7 +110,7 @@ int insert_sorted_list(line_list **queue, order element)
         new->next = run;
     }
     (*queue)->len += 1;
-    return OK;
+    return current_length;
 }
 
 line_arr *generate_line_arr(int t1_ot, int t1_do, int t2_ot, int t2_do)
@@ -214,7 +216,7 @@ void OA_arr(line_arr *queue)
             printf("line length = %d\n", code);
             printf("average line length = %f\n", sum_len / (double)counter);
             printf("_____________________________\n");
-            print_arr(*queue);
+            //print_arr(*queue);
         }
     }
 
@@ -230,6 +232,8 @@ void OA_arr(line_arr *queue)
 
 void  OA_list(line_list **queue)
 {
+    int cur_len;
+
     double time = 0;
     double time_prostoy = 0;
 
@@ -262,15 +266,15 @@ void  OA_list(line_list **queue)
             order_out++;
         else
         {
-            insert_sorted_list(queue, el);
+            cur_len = insert_sorted_list(queue, el);
         }
-        sum_len += (*queue)->len;
+        sum_len += cur_len;
         counter++;
         if (counter != 0 && counter % EVERY == 0)
         {
-            print_list(**queue);
+            //print_list(**queue);
             printf("%d orders are processed\n", counter);
-            printf("line length = %d\n", (*queue)->len);
+            printf("line length = %d\n", cur_len);
             printf("average line length = %f\n", sum_len / (double)counter);
         }
     }

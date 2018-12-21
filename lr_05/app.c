@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
+#include <stdlib.h>
 #include "define.h"
 #include "queue.h"
 #include "func.h"
 
 int main(void)
 {
+    srand(time(NULL));
+
     //input intervals
     int t_interval1 = 0;
     int t_interval2 = 6;
