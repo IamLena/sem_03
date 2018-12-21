@@ -55,10 +55,10 @@ int pop_arr(line_arr *queue, order *element)
 }
 void print_arr(line_arr queue)
 {
-    for (int i = 0; i < MAX_LEN; i++)
+    /*for (int i = 0; i < MAX_LEN; i++)
         print_order(queue.line[i]);
         //printf("%lf ", queue.line[i]);
-    printf("\n");
+    printf("\n");*/
 
     for (int i = 0; i < queue.len; i++)
     {
@@ -68,7 +68,7 @@ void print_arr(line_arr queue)
         if (queue.pout == queue.line + MAX_LEN)
             queue.pout = queue.line;
     }
-    printf("\n");
+    printf("\n----------------------------\n");
 }
 void destroy_arr(line_arr *queue)
 {
@@ -154,4 +154,5 @@ void destroy_list(line_list *queue)
     queue->pin = NULL;
     queue->pout = NULL;
     queue->len = 0;
+    free(queue);
 }

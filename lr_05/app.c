@@ -1,67 +1,58 @@
 #include <stdio.h>
+#include <string.h>
 #include "define.h"
 #include "queue.h"
 #include "func.h"
 
 int main(void)
 {
+    //input intervals
+    int t_interval1 = 0;
+    int t_interval2 = 6;
+    int t_processing1 = 0;
+    int t_processing2 = 1;
+    printf("input the interval time of orders\n");
+    input_int(&t_interval1, 2, "from: ");
+    input_int(&t_interval1, 2, "to: ");
+    printf("input the time of processing orders\n");
+    input_int(&t_interval1, 2, "from: ");
+    input_int(&t_interval1, 2, "to: ");
+    if (t_interval1 >= t_interval2)
+    {
+        t_interval1 = 0;
+        t_interval2 = 6;
+    }
+    if (t_processing1 >= t_processing2)
+    {
+        t_processing1 = 0;
+        t_processing2 = 1;
+    }
+    printf("input result: t1 = (%d, %d); t2 = (%d, %d)\n", t_interval1, t_interval2, t_processing1, t_processing2);
+
     //array
     {
-        printf("\narray\n");
-
-        /*line_arr *queue1 = create_arr();
-        order element;
-        while (queue1->len != MAX_LEN)
+        printf("\n--------------------ARRAY---------------\n\n");
+        line_arr *queue = generate_line_arr(t_interval1, t_interval2, t_processing1, t_processing2);
+        if (queue->len <= 15)
         {
-            push_arr(&queue1, element);
-            printf("line pusehed\n");
-            print_arr(*queue1);
+            printf("generated\n");
+            print_arr(*queue);
         }
-        while (queue1->len != 0)
-        {
-            pop_arr(queue1, &element);
-            printf("line poped\n");
-            print_arr(*queue1);
-            printf("an element\n");
-            print_order(element);
-        }*/
-        //order el;
-        line_arr *queue = generate_line_arr();
-        /*pop_arr(queue, &el);
-        printf("here\n");
-        print_arr(*queue);
-        printf("there\n");
-
-
-        order element;
-        element.time_arrive = 4;
-        print_order(element);
-        printf("\n______________\n");
-        insert_sorted_array(queue, element);*/
-        print_arr(*queue);
         OA_arr(queue);
         destroy_arr(queue);
-
     }
 
     //list
     {
-        printf("\nlist\n");
-        /*line_list *queue2 = create_list();
-        order element;
-        push_list(&queue2, element);
-        printf("line pusehed\n");
-        print_list(*queue2);
-        pop_list(queue2, &element);
-        printf("line poped\n");
-        print_list(*queue2);
-        printf("an element\n");
-        print_order(element);*/
-        line_list *queue = generate_line_list();
-        print_list(*queue);
+        printf("\n--------------------LIST---------------\n\n");
+        line_list *queue = generate_line_list(t_interval1, t_interval2, t_processing1, t_processing2);
+        if (queue->len <= 15)
+        {
+            printf("generated\n");
+            print_list(*queue);
+        }
         OA_list(&queue);
         destroy_list(queue);
     }
-
     return 0;
 }

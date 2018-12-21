@@ -11,6 +11,7 @@ typedef struct node_t* node_p;
 typedef struct line_list_t line_list;
 
 //array
+#pragma pack (push, 1)
 struct order_t
 {
     double time_interval;
@@ -18,7 +19,9 @@ struct order_t
     double time_processing;
     int loop;
 };
+#pragma pack (pop)
 
+#pragma pack (push, 1)
 struct line_arr_t
 {
     order line[MAX_LEN];
@@ -26,22 +29,24 @@ struct line_arr_t
     order *pout;
     int len;
 };
+#pragma pack (pop)
 
-
+#pragma pack (push, 1)
 struct node_t
 {
     order value;
     struct node_t *next;
 };
+#pragma pack (pop)
 
-//list
+#pragma pack (push, 1)
 struct line_list_t
 {
-    //node_p head;
     node_p pin;
     node_p pout;
     int len;
 };
+#pragma pack (pop)
 
 //array_funcs
 line_arr *create_arr(void);
