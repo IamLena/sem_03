@@ -17,51 +17,6 @@ double randfrom(double min, double max)
     return min + (rand() / div);
 }
 
-order *next_pointer(line_arr *queue, order *pointer)
-{
-    if (pointer == queue->line + MAX_LEN)
-        return queue->line;
-    return pointer + 1;
-}
-
-order *prev_pointer(line_arr *queue, order *pointer)
-{
-    if (pointer == queue->line)
-        return queue->line + MAX_LEN - 1;
-    return pointer - 1;
-}
-
-//исправить в принципе реализвацию.
-// так долго, много операций.
-int insert_sorted_array(line_arr *queue, order element)
-{
-    if (queue->len == MAX_LEN)
-        return FULL;
-    if (queue->len == 0)
-    {
-        *(queue->pin) = element;
-        queue->len++;
-        queue->pout = queue->pin;
-        queue->pin = next_pointer(queue, queue->pin);
-        return OK;
-    }
-    order *run = prev_pointer(queue, queue->pout);
-    order *next = queue->pout;
-    queue->pout -= 1;
-
-    while(run != queue->pout && next->time_arrive <= element.time_arrive)
-    {
-        printf("%lf vs %lf\n",  next->time_arrive, element.time_arrive);
-        print_order(*next);
-        *run = *next;
-        run = next_pointer(queue, run);
-        next = next_pointer(queue, next);
-    }
-    *run = element;
-    queue->len += 1;
-    return OK;
-}
-
 int insert_sorted_array2(line_arr *queue, order element)
 {
     int current_length = 1;
@@ -113,7 +68,7 @@ int insert_sorted_list(line_list **queue, order element)
     return current_length;
 }
 
-line_arr *generate_line_arr(int t1_ot, int t1_do, int t2_ot, int t2_do)
+line_arr *generate_line_arr(double t1_ot, double t1_do, double t2_ot, double t2_do)
 {
     double time = 0;
     line_arr *queue = create_arr();
@@ -122,22 +77,24 @@ line_arr *generate_line_arr(int t1_ot, int t1_do, int t2_ot, int t2_do)
     while (queue->len != MAX_LEN)
     {
         new_order.loop = 0;
-        new_order.time_interval = randfrom(t1_ot, t1_do);
-        //new_order.time_interval = 3;
+        if (t1_ot == t1_do)
+            new_order.time_interval = t1_ot;
+        else
+            new_order.time_interval = randfrom(t1_ot, t1_do);
         time += new_order.time_interval;
-        new_order.time_processing = randfrom(t2_ot, t2_do);
-        //new_order.time_processing = 0.5;
+        if (t2_ot == t2_do)
+            new_order.time_processing = t2_ot;
+        else
+            new_order.time_processing = randfrom(t2_ot, t2_do);
         new_order.time_arrive = time;
         push_arr(&queue, new_order);
-//        if (new_order.time_arrive > 19360 && new_order.time_arrive < 19370)
-//            printf("%d\n", queue->len);
     }
 
     return queue;
 }
 
 
-line_list *generate_line_list(int t1_ot, int t1_do, int t2_ot, int t2_do)
+line_list *generate_line_list(double t1_ot, double t1_do, double t2_ot, double t2_do)
 {
     double time = 0;
     line_list *queue = create_list();
@@ -148,9 +105,15 @@ line_list *generate_line_list(int t1_ot, int t1_do, int t2_ot, int t2_do)
         while (queue->len != MAX_LEN)
         {
             new_order.loop = 0;
-            new_order.time_interval = randfrom(t1_ot, t1_do);
+            if (t1_ot == t1_do)
+                new_order.time_interval = t1_ot;
+            else
+                new_order.time_interval = randfrom(t1_ot, t1_do);
             time += new_order.time_interval;
-            new_order.time_processing = randfrom(t2_ot, t2_do);
+            if (t2_ot == t2_do)
+                new_order.time_processing = t2_ot;
+            else
+                new_order.time_processing = randfrom(t2_ot, t2_do);
             new_order.time_arrive = time;
             push_list(&queue, new_order);
         }
@@ -158,7 +121,7 @@ line_list *generate_line_list(int t1_ot, int t1_do, int t2_ot, int t2_do)
     return queue;
 }
 
-void OA_arr(line_arr *queue)
+double OA_arr(line_arr *queue, int n, int every)
 {
 
     double time = 0;
@@ -171,20 +134,15 @@ void OA_arr(line_arr *queue)
     int code;
     order el;
 
-
-    while(order_out != N)
+    while(order_out != n)
     {
-
         if (pop_arr(queue, &el) != OK)
         {
             printf("empty\n");
-            return;
+            return time;
         }
         if (el.time_arrive - time > 0)
             time_prostoy += el.time_arrive - time;
-
-        printf("%.0f : %d : OA |%d| : ", time, order_out, el.loop);
-        print_loops_arr(*queue, time);
 
         if (el.loop == 0)
             input++;
@@ -194,7 +152,6 @@ void OA_arr(line_arr *queue)
         el.loop++;
         el.time_arrive = time;
         el.time_interval = 0;
-//        el.time_arrive = time + el.time_interval;
 
         if (el.loop == 5)
         {
@@ -202,33 +159,31 @@ void OA_arr(line_arr *queue)
             memmove(queue->line, queue->pout, queue->len * sizeof(order));
             queue->pout -= 1;
             queue->pin = queue->pout + queue->len;
-            //printf("\nout\n");
-            //print_arr(*queue);
-
         }
         else
         {
-            //int code = insert_sorted_array(queue, el);
             code = insert_sorted_array2(queue, el);
-            //print_arr(*queue);
             if (code == FULL)
             {
                 printf("full\n");
-                return;
+                return time;
             }
             else
                 sum_len += code;
         }
-        //sum_len += queue->len;
         counter++;
-//        if (counter != 0 && counter % EVERY == 0)
-//        {
-//            printf("%d orders are processed\n", counter);
-//            printf("line length = %d\n", code);
-//            printf("average line length = %f\n", sum_len / (double)counter);
-//            printf("_____________________________\n");
-//            //print_arr(*queue);
-//        }
+        if (counter != 0 && counter % every == 0)
+        {
+            printf("%d orders are processed\n", counter);
+            printf("line length = %d\n", code);
+            printf("average line length = %f\n", sum_len / (double)counter);
+            printf("_____________________________\n");
+            if (code <= 10)
+            {
+                printf("%.0f : %d : OA |%d| : ", time, order_out, el.loop);
+                print_loops_arr(*queue, time);
+            }
+        }
     }
 
     while (queue->pout->time_arrive <= time)
@@ -245,9 +200,11 @@ void OA_arr(line_arr *queue)
     printf("|output orders   = %-8d\t|\n", order_out);
     printf("|actions         = %-8d\t|\n", counter);
     printf("|_______________________________|\n");
+
+    return time;
 }
 
-void  OA_list(line_list **queue)
+double OA_list(line_list **queue, int n, int every)
 {
     int cur_len;
 
@@ -260,12 +217,12 @@ void  OA_list(line_list **queue)
     int sum_len = 0;
     order el;
 
-    while(order_out != N)
+    while(order_out != n)
     {
         if (pop_list(*queue, &el) != OK)
         {
             printf("empty\n");
-            return;
+            return time;
         }
         if (el.time_arrive - time > 0)
             time_prostoy += el.time_arrive - time;
@@ -287,7 +244,7 @@ void  OA_list(line_list **queue)
         }
         sum_len += cur_len;
         counter++;
-        if (counter != 0 && counter % EVERY == 0)
+        if (counter != 0 && counter % every == 0)
         {
             printf("%d orders are processed\n", counter);
             printf("line length = %d\n", cur_len);
@@ -311,6 +268,8 @@ void  OA_list(line_list **queue)
     printf("|output orders   = %-8d\t|\n", order_out);
     printf("|actions         = %-8d\t|\n", counter);
     printf("|_______________________________|\n");
+
+    return time;
 }
 
 
@@ -463,79 +422,106 @@ int input_int(int *num, int n, char *key)
     return rc;
 }
 
-void OA_arr2(void)
+int input_double(double *num, int n, char *key)
 {
-    line_arr *queue = create_arr();
-
-    double time = 0;
-    double time_prostoy = 0;
-
-    int order_out = 0;
-    int input = 0;
-    int counter = 0;
-    int sum_len = 0;
-    int code;
-    order el;
-
-    while(order_out != N)
+    char buf[n];
+    double a = 0, dot = 1;
+    int flag = 0;
+    int rc = OK;
+    bool yn;
+    if (input_string(buf, n, key) != OK)
+        return IO_ERR;
+    for (int i = 0; buf[i] != '\0'; i++)
     {
-        if (pop_arr(queue, &el) != OK)
+        if (isdigit(buf[i]) || buf[i] == '.' || buf[i] == '-' || buf[i] == '+')
         {
-            printf("empty\n");
-            return;
-        }
-        if (el.time_arrive - time > 0)
-            time_prostoy += el.time_arrive - time;
+            if (buf[i] == '-')
+            {
+                if (i == 0)
+                    dot = -1;
+                else
+                {
+                    printf("Invalid input\n");
+                    rc = IO_ERR;
+                    while (rc != OK)
+                        rc = input_bool(&yn, "Want to try again? ");
+                    if (yn == true)
+                        rc = input_double(num, n, key);
+                    if (yn == false)
+                        rc = IO_ERR;
+                    return rc;
+                }
 
-        if (el.loop == 0)
-            input++;
-
-        time += el.time_interval;
-        time += el.time_processing;
-        el.loop++;
-        el.time_arrive = time;
-        el.time_interval = 0;
-
-        if (el.loop == 5)
-        {
-            order_out++;
-            memmove(queue->line, queue->pout, queue->len * sizeof(order));
-            queue->pout -= 1;
-            queue->pin = queue->pout + queue->len;
-            //printf("\nout\n");
-            //print_arr(*queue);
-
+            }
+            else if (buf[i] == '+')
+            {
+                if (i == 0)
+                    dot = 1;
+                else
+                {
+                    printf("Invalid input\n");
+                    rc = IO_ERR;
+                    while (rc != OK)
+                        rc = input_bool(&yn, "Want to try again? ");
+                    if (yn == true)
+                        rc = input_double(num, n, key);
+                    if (yn == false)
+                        rc = IO_ERR;
+                    return rc;
+                }
+            }
+            else if (buf[i] == '.')
+            {
+                if (flag == 1)
+                {
+                    printf("Invalid input\n");
+                    rc = IO_ERR;
+                    while (rc != OK)
+                        rc = input_bool(&yn, "Want to try again? ");
+                    if (yn == true)
+                        rc = input_double(num, n, key);
+                    if (yn == false)
+                        rc = IO_ERR;
+                    return rc;
+                }
+                else
+                    flag = 1;
+            }
+            else
+            {
+                if (a != 0)
+                    a *= 10;
+                a += buf[i] - '0';
+                if (flag == 1)
+                    dot *= 10;
+                if (dot == 10000000)
+                {
+                    printf("Invalid input power\n");
+                    rc = IO_ERR;
+                    while (rc != OK)
+                        rc = input_bool(&yn, "Want to try again? ");
+                    if (yn == true)
+                        rc = input_double(num, n, key);
+                    if (yn == false)
+                        rc = IO_ERR;
+                    return rc;
+                }
+            }
         }
         else
         {
-            //int code = insert_sorted_array(queue, el);
-            code = insert_sorted_array2(queue, el);
-            //print_arr(*queue);
-            if (code == FULL)
-            {
-                printf("full\n");
-                return;
-            }
-            else
-                sum_len += code;
-        }
-        //sum_len += queue->len;
-        counter++;
-        if (counter != 0 && counter % EVERY == 0)
-        {
-            //print_arr(*queue);
-            printf("%d orders are processed\n", counter);
-            printf("line length = %d\n", code);
-            printf("average line length = %f\n", sum_len / (double)counter);
+            printf("Invalid input\n");
+            rc = IO_ERR;
+            while (rc != OK)
+                rc = input_bool(&yn, "Want to try again? ");
+            if (yn == true)
+                rc = input_double(num, n, key);
+            if (yn == false)
+                rc = IO_ERR;
+            return rc;
         }
     }
-
-    printf("\n__________RESULTS_______________\n");
-    printf("|                               |\n");
-    printf("|time of working = %lf\t|\n", time);
-    printf("|time prostoy    = %lf\t|\n", time_prostoy);
-    printf("|input orders    = %-8d\t|\n", input);
-    printf("|output orders   = %-8d\t|\n", order_out);
-    printf("|actions         = %-8d\t|\n", counter);
-    printf("|_______________________________|\n");
+    a /= dot;
+    *num = a;
+    return rc;
 }

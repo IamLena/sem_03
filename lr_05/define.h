@@ -2,8 +2,8 @@
 #define DEFINE_H
 
 #define MAX_LEN 20000
-#define N 10
-#define EVERY 100000
+#define N 1000
+#define EVERY 100
 
 #define OK 0
 #define MEM_ERR 1
