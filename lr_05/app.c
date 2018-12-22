@@ -7,6 +7,13 @@
 #include "queue.h"
 #include "func.h"
 
+unsigned long tick(void)
+{
+    unsigned long long d;
+    __asm__ __volatile__ ("rdtsc" : "=A" (d) );
+    return d;
+}
+
 int get_mode(char *valid, char *key)
 {
     printf("%s ", key);
@@ -37,15 +44,16 @@ int get_mode(char *valid, char *key)
 
 int menu(void)
 {
-    printf("_________________________________\n");
-    printf("menu:\n");
+    printf("_________________________________________________________________________________\n");
+    printf("\t\t\t\tMENU\n");
+    printf("---------------------------------------------------------------------------------\n");
     printf("1) change interval and processing time ranges of orders\n");
     printf("2) change quantity of out orders and frequency of showing information about length\n");
     printf("3) 100%% precision results of modeling\n");
     printf("4) modeling #1, array\n");
     printf("5) nodeling #2, list\n");
     printf("6) exit\n");
-    printf("_________________________________\n");
+    printf("_________________________________________________________________________________\n");
     //printf("input the option: \n");
     int mode = get_mode("123456", "input the option");
     return mode;
@@ -74,11 +82,14 @@ int main(void)
 
     double estimated = -1;
     double time;
+    unsigned long t1, t2;
 
     while (option != 6)
     {
-        printf("values:\ntime_interval (%.2f, %.2f)\ntime_processing (%.2f, %.2f)\n", t_interval1, t_interval2, t_processing1, t_processing2);
-        printf("%d out orders\nevery %d of actions show info\n", n, every);
+        printf("\n _____________VALUES___________\n");
+        printf("|time_interval (%.2f, %.2f)    |\n|time_processing (%.2f, %.2f)  |\n", t_interval1, t_interval2, t_processing1, t_processing2);
+        printf("|%d out orders\t       |\n|every %d of actions show info|\n", n, every);
+        printf("|______________________________|\n");
         option = menu();
 
         if (option == 1)
@@ -123,8 +134,11 @@ int main(void)
                 estimated = estimate(t_interval1, t_interval2, t_processing1, t_processing2, n);
             printf("\n--------------------ARRAY---------------\n");
             line_arr *queue = generate_line_arr(t_interval1, t_interval2, t_processing1, t_processing2);
+            t1 = tick();
             time = OA_arr(queue, n, every);
+            t2 = tick();
             printf("precision - %f%%\n", abs(estimated - time)/estimated * 100);
+            printf("time ticks = %lu\n", t2 - t1);
             destroy_arr(queue);
         }
         else if (option == 5)
@@ -133,7 +147,11 @@ int main(void)
                 estimated = estimate(t_interval1, t_interval2, t_processing1, t_processing2, n);
             printf("\n--------------------LIST---------------\n");
             line_list *queue = generate_line_list(t_interval1, t_interval2, t_processing1, t_processing2);
-            OA_list(&queue, n, every);
+            t1 = tick();
+            time = OA_list(&queue, n, every);
+            t2 = tick();
+            printf("precision - %f%%\n", abs(estimated - time)/estimated * 100);
+            printf("time ticks = %lu\n", t2 - t1);
             destroy_list(queue);
         }
     }

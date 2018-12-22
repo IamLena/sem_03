@@ -175,7 +175,7 @@ int pop_list (line_list *queue, order *element)
         return EMPTY;
     *element = queue->pout->value;
     node_p next = queue->pout->next;
-    free(queue->pout);
+    free(queue->pout);//memory error
     queue->pout = next;
     queue->len--;
     return OK;
