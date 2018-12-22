@@ -107,14 +107,14 @@ void print_loops_arr(line_arr queue, double time)
 //            queue.pout = queue.line;
     }
     printf(":%d", count);
-    printf("| %d ", count_zeros);
-    printf("| %d ", count_ones);
-    printf("| %d ", count_twos);
-    printf("| %d ", count_threes);
-    printf("| %d ", count_fours);
-    printf("| %.1f ", sum);
-    printf("| %.1f ", sum_todo);
-    printf("| %.1f ", sum_todo / sum);
+//    printf("| %d ", count_zeros);
+//    printf("| %d ", count_ones);
+//    printf("| %d ", count_twos);
+//    printf("| %d ", count_threes);
+//    printf("| %d ", count_fours);
+//    printf("| %.1f ", sum);
+//    printf("| %.1f ", sum_todo);
+//    printf("| %.1f ", sum_todo / sum);
     printf("\n");
 }
 

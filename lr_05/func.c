@@ -129,8 +129,8 @@ line_arr *generate_line_arr(int t1_ot, int t1_do, int t2_ot, int t2_do)
         //new_order.time_processing = 0.5;
         new_order.time_arrive = time;
         push_arr(&queue, new_order);
-        if (new_order.time_arrive > 19360 && new_order.time_arrive < 19370)
-            printf("%d\n", queue->len);
+//        if (new_order.time_arrive > 19360 && new_order.time_arrive < 19370)
+//            printf("%d\n", queue->len);
     }
 
     return queue;
@@ -174,8 +174,6 @@ void OA_arr(line_arr *queue)
 
     while(order_out != N)
     {
-//        printf("%f : %d : OA : ", time, order_out);
-//        print_loops_arr(*queue, time);
 
         if (pop_arr(queue, &el) != OK)
         {
@@ -185,8 +183,8 @@ void OA_arr(line_arr *queue)
         if (el.time_arrive - time > 0)
             time_prostoy += el.time_arrive - time;
 
-        /*printf("%.0f : %d : OA |%d| : ", time, order_out, el.loop);
-        print_loops_arr(*queue, time);*/
+        printf("%.0f : %d : OA |%d| : ", time, order_out, el.loop);
+        print_loops_arr(*queue, time);
 
         if (el.loop == 0)
             input++;
@@ -242,7 +240,7 @@ void OA_arr(line_arr *queue)
     printf("\n__________RESULTS_______________\n");
     printf("|                               |\n");
     printf("|time of working = %lf\t|\n", time);
-    printf("|time prostoy    = %lf\t|\n", time_prostoy);
+    printf("|time idle       = %lf\t|\n", time_prostoy);
     printf("|input orders    = %-8d\t|\n", input);
     printf("|output orders   = %-8d\t|\n", order_out);
     printf("|actions         = %-8d\t|\n", counter);
@@ -308,7 +306,7 @@ void  OA_list(line_list **queue)
     printf("\n__________RESULTS_______________\n");
     printf("|                               |\n");
     printf("|time of working = %lf\t|\n", time);
-    printf("|time prostoy    = %lf\t|\n", time_prostoy);
+    printf("|time idle       = %lf\t|\n", time_prostoy);
     printf("|input orders    = %-8d\t|\n", input);
     printf("|output orders   = %-8d\t|\n", order_out);
     printf("|actions         = %-8d\t|\n", counter);

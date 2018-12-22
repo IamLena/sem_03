@@ -17,10 +17,10 @@ int main(void)
     int t_processing2 = 1;
     printf("input the interval time of orders\n");
     input_int(&t_interval1, 2, "from: ");
-    input_int(&t_interval1, 2, "to: ");
+    input_int(&t_interval2, 2, "to: ");
     printf("input the time of processing orders\n");
-    input_int(&t_interval1, 2, "from: ");
-    input_int(&t_interval1, 2, "to: ");
+    input_int(&t_processing1, 2, "from: ");
+    input_int(&t_processing2, 2, "to: ");
     if (t_interval1 >= t_interval2)
     {
         t_interval1 = 0;
@@ -37,7 +37,7 @@ int main(void)
 
     //array
     {
-        printf("\n--------------------ARRAY---------------\n\n");
+        printf("\n--------------------ARRAY---------------\n");
         line_arr *queue = generate_line_arr(t_interval1, t_interval2, t_processing1, t_processing2);
         if (queue->len <= 15)
         {
@@ -50,7 +50,7 @@ int main(void)
 
     //list
     {
-        printf("\n--------------------LIST---------------\n\n");
+        printf("\n--------------------LIST---------------\n");
         line_list *queue = generate_line_list(t_interval1, t_interval2, t_processing1, t_processing2);
         if (queue->len <= 15)
         {
