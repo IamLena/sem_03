@@ -115,7 +115,7 @@ int main(void)
         else if (option == 2)
         {
             input_int(&n, 4, "input the number of out orders: ");
-            input_int(&every, 4, "input frequency of showing information about length: ");
+            input_int(&every, 6, "input frequency of showing information about length: ");
 
             if (n <= 0 || every <= 0)
             {

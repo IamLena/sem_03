@@ -237,20 +237,43 @@ double OA_list(line_list **queue, int n, int every)
         el.time_interval = 0;
 
         if (el.loop == 5)
+        {
             order_out++;
+            if (order_out != 0 && order_out % every == 0)
+            {
+                printf("%d\n", order_out);
+                printf("%d orders are processed\n", counter);
+                printf("line length = %d\n", cur_len);
+                printf("average line length = %f\n", sum_len / (double)counter);
+                printf("_____________________________\n");
+            }
+        }
         else
         {
             cur_len = insert_sorted_list(queue, el);
+            if (cur_len == FULL)
+            {
+                printf("full\n");
+                return time;
+            }
+            else if (cur_len == MEM_ERR)
+            {
+                printf("mem_err\n");
+                return time;
+            }
         }
         sum_len += cur_len;
         counter++;
-        if (counter != 0 && counter % every == 0)
-        {
-            printf("%d orders are processed\n", counter);
-            printf("line length = %d\n", cur_len);
-            printf("average line length = %f\n", sum_len / (double)counter);
-            printf("_____________________________\n");
-        }
+        //if (counter != 0 && counter % every == 0)
+//        {
+//            printf("%d\n", order_out);
+//            printf("%d orders are processed\n", counter);
+//            printf("line length = %d\n", cur_len);
+//            printf("average line length = %f\n", sum_len / (double)counter);
+//            printf("_____________________________\n");
+//        }
+//        printf("%f| OA| ", time);
+//        print_loops_list(**queue, time);
     }
 
     while ((*queue)->pout->value.time_arrive <= time)
