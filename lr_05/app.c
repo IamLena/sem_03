@@ -64,6 +64,7 @@ double estimate(double t_interval1, double t_interval2, double t_processing1, do
     double t1 = (t_interval1 + t_interval2)/2;
     double t2 = (t_processing1 + t_processing2)/2;
     line_arr *queue = generate_line_arr(t1, t1, t2, t2);
+//    print_arr(*queue);
     double estimated = OA_arr(queue, n, 10 * n);
     destroy_arr(queue);
     return estimated;

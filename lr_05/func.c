@@ -131,7 +131,7 @@ double OA_arr(line_arr *queue, int n, int every)
     int input = 0;
     int counter = 0;
     int sum_len = 0;
-    int code;
+    int code = 0;
     order el;
 
     while(order_out != n)
@@ -147,7 +147,8 @@ double OA_arr(line_arr *queue, int n, int every)
         if (el.loop == 0)
             input++;
 
-        time += el.time_interval;
+        if (el.time_arrive - time > 0)
+            time = el.time_arrive;
         time += el.time_processing;
         el.loop++;
         el.time_arrive = time;
@@ -159,6 +160,18 @@ double OA_arr(line_arr *queue, int n, int every)
             memmove(queue->line, queue->pout, queue->len * sizeof(order));
             queue->pout -= 1;
             queue->pin = queue->pout + queue->len;
+            if (counter != 0 && order_out % every == 0)
+            {
+                printf("%d orders are processed\n", counter);
+                printf("line length = %d\n", code);
+                printf("average line length = %f\n", sum_len / (double)counter);
+                printf("_____________________________\n");
+                if (code <= 10)
+                {
+                    printf("%.2f : %d : OA |%d| : ", time, order_out, el.loop);
+                    print_loops_arr(*queue, time);
+                }
+            }
         }
         else
         {
@@ -172,18 +185,6 @@ double OA_arr(line_arr *queue, int n, int every)
                 sum_len += code;
         }
         counter++;
-        if (counter != 0 && counter % every == 0)
-        {
-            printf("%d orders are processed\n", counter);
-            printf("line length = %d\n", code);
-            printf("average line length = %f\n", sum_len / (double)counter);
-            printf("_____________________________\n");
-            if (code <= 10)
-            {
-                printf("%.0f : %d : OA |%d| : ", time, order_out, el.loop);
-                print_loops_arr(*queue, time);
-            }
-        }
     }
 
     while (queue->pout->time_arrive <= time)
@@ -206,7 +207,7 @@ double OA_arr(line_arr *queue, int n, int every)
 
 double OA_list(line_list **queue, int n, int every)
 {
-    int cur_len;
+    int cur_len = 0;
 
     double time = 0;
     double time_prostoy = 0;
@@ -230,7 +231,8 @@ double OA_list(line_list **queue, int n, int every)
         if (el.loop == 0)
             input++;
 
-        time += el.time_interval;
+        if (el.time_arrive - time > 0)
+            time = el.time_arrive;
         time += el.time_processing;
         el.loop++;
         el.time_arrive = time;
@@ -246,7 +248,13 @@ double OA_list(line_list **queue, int n, int every)
                 printf("line length = %d\n", cur_len);
                 printf("average line length = %f\n", sum_len / (double)counter);
                 printf("_____________________________\n");
+                if (cur_len <= 10)
+                {
+                    printf("%.2f : %d : OA |%d| : ", time, order_out, el.loop);
+                    print_loops_list(**queue, time);
+                }
             }
+
         }
         else
         {
@@ -264,16 +272,6 @@ double OA_list(line_list **queue, int n, int every)
         }
         sum_len += cur_len;
         counter++;
-        //if (counter != 0 && counter % every == 0)
-//        {
-//            printf("%d\n", order_out);
-//            printf("%d orders are processed\n", counter);
-//            printf("line length = %d\n", cur_len);
-//            printf("average line length = %f\n", sum_len / (double)counter);
-//            printf("_____________________________\n");
-//        }
-//        printf("%f| OA| ", time);
-//        print_loops_list(**queue, time);
     }
 
     while ((*queue)->pout->value.time_arrive <= time)
