@@ -99,7 +99,6 @@ void print_hash(struct node **hash_table, int length)
 int make_hashtable(int *numbers, int length, struct node ***table, int *hash_length)
 {
     int index;
-    int depth = 0;
     int hash_len = generate_simple(length);
     struct node **hash_table = malloc(hash_len * sizeof(struct node*));
     if (!hash_table)
@@ -112,7 +111,6 @@ int make_hashtable(int *numbers, int length, struct node ***table, int *hash_len
         struct node* cur = hash_table[index];
         if (cur == NULL)
         {
-            printf("dep = %d\n", depth);
             struct node *element = malloc(sizeof(struct node));
             if (!element)
             {
@@ -133,7 +131,6 @@ int make_hashtable(int *numbers, int length, struct node ***table, int *hash_len
             //depth++;
             cur = cur->next;
         }
-        printf("dep = %d\n", depth);
             struct node *element = malloc(sizeof(struct node));
             if (!element)
             {
@@ -153,23 +150,48 @@ int make_hashtable(int *numbers, int length, struct node ***table, int *hash_len
     return 0;
 }
 
+int find_in_list(struct node* cur, int num, int *count)
+{
+    while(cur != NULL)
+    {
+        if (cur->value == num)
+            return 1;
+        else
+        {
+            cur = cur->next;
+            *count += 1;
+        }
+    }
+    return 0;
+}
+
 int find(int num, struct node **table, int length)
 {
     int count = 0;
     int index = hash(num, length);
-    while (table[index]->value != num)
+
+    int found = find_in_list(table[index], num, &count);
+    printf("depth = %d\n", count);
+    return found;
+}
+
+void destroy_list(struct node *list)
+{
+    while(list != NULL)
     {
-        if (table[index]->next != NULL)
-        {
-            struct node *cur = table[index];
-
-            count++;
-
-        }
-        else
-            return 0;
+        struct node *next = list->next;
+        free(list);
+        list = next;
     }
-    return 0;
+}
+
+void destroy(struct node ***table, int length)
+{
+    for (int i = 0; i < length; i++)
+    {
+        destroy_list(*table[i]);
+    }
+    free(table);
 }
 
 int main(int argc, char *argv[])
@@ -194,6 +216,18 @@ int main(int argc, char *argv[])
     int hash_len;
 
     make_hashtable(array, len, &table, &hash_len);
+    free(array);
     print_hash(table, hash_len);
+
+    int number;
+    printf("Input the number to find: \n");
+    scanf("%d", &number);
+
+
+    int found = find(number, table, hash_len);
+    if (found == 0)
+        printf("not found\n");
+    else
+        printf("found\n");
     return 0;
 }
