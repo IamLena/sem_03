@@ -141,6 +141,7 @@ double OA_arr(line_arr *queue, int n, int every)
             printf("empty\n");
             return time;
         }
+
         if (el.time_arrive - time > 0)
             time_prostoy += el.time_arrive - time;
 
@@ -162,15 +163,16 @@ double OA_arr(line_arr *queue, int n, int every)
             queue->pin = queue->pout + queue->len;
             if (counter != 0 && order_out % every == 0)
             {
-                printf("%d orders are processed\n", counter);
-                printf("line length = %d\n", code);
-                printf("average line length = %f\n", sum_len / (double)counter);
-                printf("_____________________________\n");
                 if (code <= 10)
                 {
                     printf("%.2f : %d : OA |%d| : ", time, order_out, el.loop);
                     print_loops_arr(*queue, time);
                 }
+                printf("%d orders are processed\n", counter);
+                printf("line length = %d\n", code);
+                printf("average line length = %f\n", sum_len / (double)counter);
+                printf("_____________________________\n");
+
             }
         }
         else
@@ -243,16 +245,17 @@ double OA_list(line_list **queue, int n, int every)
             order_out++;
             if (order_out != 0 && order_out % every == 0)
             {
-                printf("%d\n", order_out);
-                printf("%d orders are processed\n", counter);
-                printf("line length = %d\n", cur_len);
-                printf("average line length = %f\n", sum_len / (double)counter);
-                printf("_____________________________\n");
                 if (cur_len <= 10)
                 {
                     printf("%.2f : %d : OA |%d| : ", time, order_out, el.loop);
                     print_loops_list(**queue, time);
                 }
+                printf("%d\n", order_out);
+                printf("%d orders are processed\n", counter);
+                printf("line length = %d\n", cur_len);
+                printf("average line length = %f\n", sum_len / (double)counter);
+                printf("_____________________________\n");
+
             }
 
         }

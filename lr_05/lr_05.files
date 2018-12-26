@@ -2,5 +2,6 @@ app.c
 define.h
 func.c
 func.h
+out.txt
 queue.c
 queue.h

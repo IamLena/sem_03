@@ -1,7 +1,7 @@
 #ifndef DEFINE_H
 #define DEFINE_H
 
-#define MAX_LEN 20000
+#define MAX_LEN 2000
 
 #define OK 0
 #define MEM_ERR -3
