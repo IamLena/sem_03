@@ -8,6 +8,13 @@
 #define READ_ERR 2
 #define MEM_ERR 3
 
+unsigned long tick(void)
+{
+    unsigned long long d;
+    __asm__ __volatile__ ("rdtsc" : "=A" (d) );
+    return d;
+}
+
 // в файле количество вершин и ребра в виде (v1, v2)
 int read_graph(FILE *f, int **graph, int *n)
 {
@@ -39,6 +46,7 @@ int read_graph(FILE *f, int **graph, int *n)
         if (v1 <= 0 || v1 > *n || v2 <= 0 || v2 > *n)
         {
             free(*graph);
+            printf("invalid edges\n");
             return READ_ERR;
         }
         *(*graph + (*n) * (v1 -1) + (v2 - 1)) = 1;
@@ -99,8 +107,10 @@ int istree(int *matr, int n, int del)
   {
       if (matr[i * n + i] == 1)
       {
+          //петля
           flag = 1;
       }
+      //подсчет ребер графа (если не равен
       for (int j = i + 1; j < n; j++)
       {
           if (matr[i * n + j] == 1)
@@ -135,12 +145,12 @@ int process(int *matr, int n, int **tree)
     int flag = 0;
     for (int i = 0; i < n; i++)
     {
+        //удаление одной вершины соответствующие столбец и строка = -1
         for (int j = 0; j < n; j++)
         {
             if (matr[i * n + j] == 1)
                 matr[i * n + j] = matr[j * n + i] = -1;
         }
-
         if (istree(matr, n, i))
         {
             *tree = calloc(n * n, sizeof(int));
@@ -164,6 +174,7 @@ int process(int *matr, int n, int **tree)
 
 int main(int argc, char *argv[])
 {
+    unsigned long t1, t2;
     if (argc != 2)
     {
         printf("app.exe in.txt");
@@ -178,12 +189,15 @@ int main(int argc, char *argv[])
     }
 
     // матрица смежности графа
+    t1 = tick();
     int *graph;
     int n;
     int rc = read_graph(f, &graph, &n);
     if (rc == OK)
     {
+        printf("your graph:\n");
         print_matrix(graph, n);
+        printf("\n");
 
         FILE *graph_file = fopen("graph.gv", "w");
         to_dot(graph_file, graph, n);
@@ -197,13 +211,17 @@ int main(int argc, char *argv[])
             printf("\nGraph CAN be transformed to the tree by deleting the %d vertex with its edges.\n\n", v + 1);
             FILE *tree_file = fopen("tree.gv", "w");
             to_dot(tree_file, tree, n);
-            printf("the tree is drawn in tree.gv");
+            printf("the tree is drawn in tree.gv\n");
             fclose(tree_file);
+            free(tree);
          }
          else
             printf("\nGraph CAN'T be transformed to the tree by deleting some vertex with its edges.\n\n");
      }
-
+    free(graph);
     fclose(f);
+    t2 = tick();
+    printf("\ntime of working = %lu\n", t2 - t1);
+    printf("memory: graph = %d",4 * n * n);
     return OK;
 }
